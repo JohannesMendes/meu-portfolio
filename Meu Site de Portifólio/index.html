@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Johannes Mendes | Software Engineer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --bg-card: #f9f9f9;
+            --text-dark: #111111;
+            --text-light: #ffffff;
+            --text-muted: #666666;
+            --brand-red: #e60000;
+            --brand-red-hover: #b30000;
+            --border-color: #eeeeee;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.4;
+        }
+
+        /* Menu de Navegação Superior */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 25px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+            user-select: none;
+        }
+
+        .logo-scramble-accent {
+            color: #ff4d4d;
+            text-shadow: 0 0 1px rgba(255, 77, 77, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: #ff4d4d;
+        }
+
+        /* Seção Hero */
+        .hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 8%;
+            overflow: hidden;
+            color: var(--text-light);
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.85) 100%);
+            z-index: -1;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            align-self: flex-start;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.8rem, 6vw, 5.5rem);
+            font-weight: 500;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 25px;
+            max-width: 900px;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 580px;
+            margin-bottom: 40px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .hero-btn-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-glass-light {
+            padding: 14px 32px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #000000;
+            background-color: #ffffff;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .btn-glass-light:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .btn-glass-trans {
+            padding: 14px 32px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-light);
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .btn-glass-trans:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        section.content-section {
+            padding: 120px 8%;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-main);
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.3rem, 4vw, 3.5rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+        }
+
+        .section-title span {
+            color: var(--brand-red);
+        }
+
+        .portfolio-callout {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 60px 40px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .portfolio-callout p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .btn-view-all {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 35px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            background-color: var(--text-dark);
+            border: none;
+            text-decoration: none;
+            text-transform: uppercase;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view-all:hover {
+            background-color: var(--brand-red);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(230, 0, 0, 0.15);
+        }
+
+        /* Configuração do contêiner para os quadrados de fundo */
+        .about-section-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 60px;
+            align-items: start;
+            position: relative;
+            z-index: 2;
+        }
+
+        .about-text p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        .skills-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+        }
+
+        .skills-box h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .skill-item {
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-item::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--brand-red);
+            border-radius: 50%;
+        }
+
+        /* ESTILO DOS QUADRADOS DE FUNDO */
+        .tech-shape {
+            position: absolute;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .shape-1 {
+            width: 110px;
+            height: 110px;
+            top: 8%;
+            left: 4%;
+            border: 2px solid var(--brand-red);
+            transform: rotate(15deg);
+            background-color: rgba(230, 0, 0, 0.02);
+        }
+
+        .shape-2 {
+            width: 220px;
+            height: 220px;
+            bottom: -5%;
+            left: 30%;
+            border: 2px dashed var(--text-dark);
+            transform: rotate(-20deg);
+            opacity: 0.15;
+        }
+
+        .shape-3 {
+            width: 90px;
+            height: 90px;
+            top: 20%;
+            right: 6%;
+            border: 2px solid var(--brand-red);
+            transform: rotate(35deg);
+        }
+
+        .shape-4 {
+            width: 45px;
+            height: 45px;
+            bottom: 15%;
+            right: 42%;
+            border: 2px solid var(--text-dark);
+            transform: rotate(12deg);
+            opacity: 0.2;
+        }
+
+        /* Contato */
+        .contact {
+            text-align: center;
+            background: #fffafa;
+            padding: 120px 8%;
+        }
+
+        .contact p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+        }
+
+        .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            padding: 18px 45px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            background-color: var(--brand-red);
+            border: none;
+            text-decoration: none;
+            text-transform: uppercase;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(230, 0, 0, 0.15);
+        }
+
+        .btn-whatsapp:hover {
+            background-color: var(--brand-red-hover);
+            transform: translateY(-2px);
+        }
+
+        footer {
+            padding: 40px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 992px) {
+            .about-content { grid-template-columns: 1fr; gap: 40px; }
+            nav { padding: 20px 4%; }
+            .hero { padding: 0 4%; }
+            .hero h1 { font-size: 2.5rem; }
+            .nav-links { display: none; }
+            .tech-shape { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo"><span class="logo-scramble">JO</span><span class="logo-scramble-accent">_ENG</span></div>
+        <div class="nav-links">
+            <a href="#sobre">Sobre</a>
+            <a href="projetos.html">Projetos</a>
+            <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank">Contato</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <video class="video-background" autoplay loop muted playsinline>
+            <source src="video.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+
+        <div class="hero-tag">Engenharia de Software & Design Inteligente</div>
+        <h1>Experiências digitais<br>em movimento fluido.</h1>
+        <p>Transformando espaços digitais com arquiteturas full-stack robustas e experiências visuais em tempo real que geram engajamento e performance estável.</p>
+        
+        <div class="hero-btn-container">
+            <a href="projetos.html" class="btn-glass-light">Ver Portfólio</a>
+            <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank" class="btn-glass-trans">Iniciar Parceria</a>
+        </div>
+
+        <div class="scroll-indicator">Rolar para explorar</div>
+    </section>
+
+    <!-- Seção de Portfólio Callout -->
+    <section id="projetos" class="content-section">
+        <h2 class="section-title text">Projetos</h2>
+        <div class="portfolio-callout">
+            <p>Explore a lista completa com detalhes técnicos, interfaces visuais e acesso direto às aplicações em produção.</p>
+            <a href="projetos.html" class="btn-view-all">Acessar Página de Projetos &rarr;</a>
+        </div>
+    </section>
+
+    <!-- Seção Sobre Mim -->
+    <section id="sobre" class="content-section about-section-container">
+        <div class="tech-shape shape-1"></div>
+        <div class="tech-shape shape-2"></div>
+        <div class="tech-shape shape-3"></div>
+        <div class="tech-shape shape-4"></div>
+
+        <h2 class="section-title text">Sobre <span>Mim</span></h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>Estudante de Engenharia de Software, desenvolvo aplicações completas integrando lógica robusta com experiências visuais fluidas e responsivas.</p>
+                <p>Busco otimizar a arquitetura e a estabilidade de dados para construir sistemas modulares e limpos, prontos para solucionar desafios digitais reais de alto nível.</p>
+            </div>
+            <div class="skills-box">
+                <h3>Core Stack</h3>
+                <div class="skills-grid">
+                    <div class="skill-item">React</div>
+                    <div class="skill-item">JavaScript</div>
+                    <div class="skill-item">Python</div>
+                    <div class="skill-item">UI/UX Design</div>
+                    <div class="skill-item">Marketing</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contato -->
+    <section id="contato" class="contact">
+        <h2 class="section-title text">Vamos iniciar uma <span>parceria?</span></h2>
+        <p>Seja para criar um sistema do zero ou otimizar uma plataforma existente, entre em contato.</p>
+        <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank" class="btn-whatsapp">Conectar no WhatsApp</a>
+    </section>
+
+    <footer>
+        <div>&copy; 2026 Johannes Mendes. Todos os direitos reservados.</div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+    <script>
+        gsap.registerPlugin(SplitText, ScrambleTextPlugin);
+
+        // Animação em loop nos títulos grandes (preto/vermelho)
+        // ATUALIZADO: repeatDelay: 3 e duration: 1.02 configurados conforme solicitado
+        document.fonts.ready.then(() => {
+            const chars = SplitText.create(".text", { type: "chars" });
+            chars.chars.forEach((ch, i) => {
+                gsap.timeline({
+                    repeat: -1,
+                    repeatDelay: 3, // Configurado para 3 segundos de intervalo
+                    delay: i * 0.3
+                })
+                .to(ch, {
+                    y: -15,
+                    duration: 1.02, // Duração de subida configurada para 1.02s
+                    ease: "sine.inOut"
+                })
+                .to(ch, {
+                    y: 0,
+                    duration: 1.02, // Duração de descida configurada para 1.02s
+                    ease: "sine.inOut"
+                });
+            });
+        });
+
+        // Animação de "scramble" em loop no logo JO_ENG
+        const logoParts = [".logo-scramble", ".logo-scramble-accent"];
+        const logoOriginal = { ".logo-scramble": "JO", ".logo-scramble-accent": "_ENG" };
+        logoParts.forEach((sel) => {
+            const tl = gsap.timeline({ 
+                repeat: -1, 
+                repeatDelay: 4 
+            });
+            tl.to(sel, {
+                scrambleText: { text: "§¶•†‡ÆØÅ", speed: 0.6 },
+                duration: 0.7 
+            })
+            .to(sel, {
+                scrambleText: { text: logoOriginal[sel], speed: 0.4 },
+                duration: 0.7, 
+                delay: 0.6 
+            });
+        });
+    </script>
+
+</body>
+</html>
