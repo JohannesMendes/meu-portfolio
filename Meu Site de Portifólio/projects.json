@@ -1,0 +1,11 @@
+[
+  {
+    "id": "volta-motos",
+    "title": "Volta — Motos elétricas",
+    "description": "Landing page com foco em imagem premium, velocidade e uma experiência visual moderna para produtos de mobilidade.",
+    "image": "volta.png",
+    "imageAlt": "Preview do site Volta — Motos elétricas de alta performance",
+    "link": "https://effulgent-marzipan-9adc10.netlify.app/",
+    "tags": ["React", "Landing Page", "E-commerce"]
+  }
+]

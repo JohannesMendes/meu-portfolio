@@ -313,6 +313,14 @@
             .project-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
         }
+
+        @media (max-width: 480px) {
+            .page-header { padding: 120px 5% 35px 5%; }
+            .page-header p { font-size: 1.05rem; }
+            .project-card-title { font-size: 1.5rem; }
+            .project-card-content { padding: 22px; }
+            .logo { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
@@ -331,18 +339,9 @@
         <p>Uma vitrine detalhada das soluções de engenharia, sistemas web reativos e designs de interfaces desenvolvidos sob medida.</p>
     </header>
 
-    <!-- Listagem Principal Limpa e Aguardando seus Projetos -->
+    <!-- Listagem Principal: preenchida dinamicamente a partir de projects.json -->
     <main class="projects-container">
-        <div class="project-grid">
-            <article class="project-card">
-                <img src="volta.png" alt="Preview do site Volta — Motos elétricas de alta performance">
-                <div class="project-card-content">
-                    <h3 class="project-card-title">Volta — Motos elétricas</h3>
-                    <p class="project-card-desc">Landing page com foco em imagem premium, velocidade e uma experiência visual moderna para produtos de mobilidade.</p>
-                    <a href="https://effulgent-marzipan-9adc10.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-view-project">Acessar Site</a>
-                </div>
-            </article>
-        </div>
+        <div class="project-grid" id="projectsGrid"></div>
     </main>
 
     <footer>
@@ -394,6 +393,38 @@
                 delay: 0.8
             });
         });
+    </script>
+
+    <script>
+        // Renderiza os cards de projeto a partir da mesma fonte de dados do slider da home
+        (function () {
+            const grid = document.getElementById('projectsGrid');
+
+            function cardHTML(p) {
+                return `
+                    <article class="project-card">
+                        <img src="${p.image}" alt="${p.imageAlt || p.title}" loading="lazy">
+                        <div class="project-card-content">
+                            <h3 class="project-card-title">${p.title}</h3>
+                            <p class="project-card-desc">${p.description}</p>
+                            <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="btn-view-project">Acessar Site</a>
+                        </div>
+                    </article>
+                `;
+            }
+
+            fetch('projects.json')
+                .then((res) => res.json())
+                .then((projects) => {
+                    grid.innerHTML = projects.length
+                        ? projects.map(cardHTML).join('')
+                        : '<p class="empty-state">Novos projetos em breve.</p>';
+                })
+                .catch((err) => {
+                    console.error('Não foi possível carregar os projetos:', err);
+                    grid.innerHTML = '<p class="empty-state">Não foi possível carregar os projetos no momento.</p>';
+                });
+        })();
     </script>
 
 </body>

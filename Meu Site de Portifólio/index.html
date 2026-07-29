@@ -91,11 +91,15 @@
         .hero {
             position: relative;
             height: 100vh;
+            height: 100svh; /* corrige corte causado pela barra de endereço em navegadores mobile */
+            min-height: 560px;
             width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding: 0 8%;
+            padding-top: 90px;
+            padding-bottom: 60px;
             overflow: hidden;
             color: var(--text-light);
         }
@@ -116,7 +120,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.85) 100%);
+            /* Gradiente direcional: escurece só onde o texto fica (esquerda),
+               deixando o vídeo mais visível no restante da tela */
+            background: linear-gradient(100deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0.2) 100%);
             z-index: -1;
         }
 
@@ -138,21 +144,24 @@
 
         .hero h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(2.8rem, 6vw, 5.5rem);
+            font-size: clamp(2.2rem, 6vw, 5.5rem);
             font-weight: 500;
-            line-height: 1.1;
-            letter-spacing: -2px;
+            line-height: 1.12;
+            letter-spacing: -1.5px;
             margin-bottom: 25px;
             max-width: 900px;
+            text-wrap: balance;
+            text-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
         }
 
         .hero p {
-            font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+            font-size: clamp(1rem, 1.8vw, 1.3rem);
             color: rgba(255, 255, 255, 0.85);
             max-width: 580px;
             margin-bottom: 40px;
             font-weight: 400;
             line-height: 1.6;
+            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
         }
 
         .hero-btn-container {
@@ -293,20 +302,45 @@
             background: rgba(255, 255, 255, 0.95);
         }
 
+        .project-carousel-viewport {
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+        }
+
         .project-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 28px;
-            margin-top: 40px;
-            max-width: 980px;
-            margin-left: auto;
-            margin-right: auto;
-            justify-items: center;
+            display: flex;
+            flex-wrap: nowrap;
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+            margin-top: 0;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(17, 17, 17, 0.15);
+            cursor: pointer;
+            padding: 0;
+            transition: background-color 0.25s ease, transform 0.25s ease;
+        }
+
+        .carousel-dot.active {
+            background: var(--brand-red);
+            transform: scale(1.25);
         }
 
         .project-card {
+            flex: 0 0 100%;
             width: 100%;
-            max-width: 380px;
             background: var(--bg-card);
             border: 1px solid rgba(17, 17, 17, 0.08);
             border-radius: 24px;
@@ -531,19 +565,44 @@
 
         @media (max-width: 992px) {
             .about-content { grid-template-columns: 1fr; gap: 40px; }
-            .project-grid { grid-template-columns: 1fr 1fr; }
             nav { padding: 20px 4%; }
-            .hero { padding: 0 4%; }
-            .hero h1 { font-size: 2.5rem; }
+            .hero { padding: 0 4%; padding-top: 90px; padding-bottom: 60px; }
             .nav-links { display: none; }
             .tech-shape { display: none; }
         }
 
         @media (max-width: 700px) {
-            .project-grid { grid-template-columns: 1fr; }
             .project-card img { height: 200px; }
             .portfolio-callout { padding: 40px 25px; }
-            .content-section { padding: 80px 5%; }
+            .content-section { padding: 70px 6%; }
+            .section-title { margin-bottom: 20px; }
+
+            /* Hero: texto, tag e botões ajustados para não cortar em telas de celular */
+            .hero-tag { font-size: 0.75rem; padding: 5px 14px; margin-bottom: 20px; }
+            .hero p { max-width: 100%; margin-bottom: 32px; }
+            .hero-btn-container { flex-direction: column; align-items: stretch; gap: 12px; width: 100%; }
+            .btn-glass-light, .btn-glass-trans { text-align: center; width: 100%; padding: 15px 20px; }
+            .scroll-indicator { bottom: 20px; font-size: 0.8rem; }
+
+            /* Carrossel de projetos: setas menores e melhor toque em mobile */
+            .carousel-arrow { width: 44px; height: 44px; font-size: 1rem; flex-shrink: 0; }
+            .project-carousel { gap: 10px; }
+        }
+
+        @media (max-width: 420px) {
+            nav { padding: 16px 5%; }
+            .logo { font-size: 1.15rem; }
+            .hero h1 { letter-spacing: -1px; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .btn-whatsapp { padding: 16px 28px; font-size: 1rem; width: 100%; justify-content: center; }
+            .contact p { font-size: 1.05rem; }
+        }
+
+        /* Telas muito baixas (celular em paisagem): reduz a altura mínima do hero
+           e esconde o indicador de scroll para não sobrepor o conteúdo */
+        @media (max-height: 600px) and (max-width: 900px) {
+            .hero { min-height: 460px; }
+            .scroll-indicator { display: none; }
         }
     </style>
 </head>
@@ -580,19 +639,16 @@
         <h2 class="section-title text">Projetos</h2>
 
         <div class="project-carousel">
-            <button class="carousel-arrow" aria-label="Anterior projeto">&lt;</button>
-            <div class="project-grid">
-                <article class="project-card">
-                    <img src="volta.png" alt="Preview do site Volta — Motos elétricas de alta performance">
-                    <div class="project-card-content">
-                        <h3 class="project-card-title">Volta — Motos elétricas</h3>
-                        <p class="project-card-desc">Landing page com foco em imagem premium, velocidade e uma experiência visual moderna para produtos de mobilidade.</p>
-                        <a href="https://effulgent-marzipan-9adc10.netlify.app/" target="_blank" rel="noopener noreferrer" class="project-card-link">Acessar Site</a>
-                    </div>
-                </article>
+            <button class="carousel-arrow carousel-arrow-prev" aria-label="Projeto anterior" type="button">&lt;</button>
+            <div class="project-carousel-viewport">
+                <div class="project-grid" id="projectTrack" aria-live="polite">
+                    <!-- Os cards são renderizados dinamicamente a partir de projects.json -->
+                </div>
             </div>
-            <button class="carousel-arrow" aria-label="Próximo projeto">&gt;</button>
+            <button class="carousel-arrow carousel-arrow-next" aria-label="Próximo projeto" type="button">&gt;</button>
         </div>
+
+        <div class="carousel-dots" id="carouselDots"></div>
 
         <div class="project-preview-actions">
             <a href="projetos.html" class="btn-view-all">Ver Todos os Projetos</a>
@@ -683,6 +739,114 @@
                 delay: 0.6 
             });
         });
+    </script>
+
+    <script>
+        /* ===================================================================
+           SLIDER DE PROJETOS
+           - Fonte única de dados: projects.json (facil de reaproveitar em
+             projetos.html e escalar para múltiplos projetos)
+           - Setas com loop infinito, dots de navegação e swipe em touch
+           =================================================================== */
+        (function () {
+            const track = document.getElementById('projectTrack');
+            const dotsContainer = document.getElementById('carouselDots');
+            const prevBtn = document.querySelector('.carousel-arrow-prev');
+            const nextBtn = document.querySelector('.carousel-arrow-next');
+            const carousel = document.querySelector('.project-carousel');
+
+            let projects = [];
+            let currentIndex = 0;
+
+            function projectCardHTML(p) {
+                return `
+                    <article class="project-card">
+                        <img src="${p.image}" alt="${p.imageAlt || p.title}" loading="lazy">
+                        <div class="project-card-content">
+                            <h3 class="project-card-title">${p.title}</h3>
+                            <p class="project-card-desc">${p.description}</p>
+                            <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="project-card-link">Acessar Site</a>
+                        </div>
+                    </article>
+                `;
+            }
+
+            function render() {
+                track.innerHTML = projects.map(projectCardHTML).join('');
+
+                // Sem necessidade de slider quando há 0 ou 1 projeto
+                const needsControls = projects.length > 1;
+                prevBtn.style.display = needsControls ? 'inline-flex' : 'none';
+                nextBtn.style.display = needsControls ? 'inline-flex' : 'none';
+
+                dotsContainer.innerHTML = needsControls
+                    ? projects.map((_, i) =>
+                        `<button class="carousel-dot" data-index="${i}" aria-label="Ir para o projeto ${i + 1}" type="button"></button>`
+                      ).join('')
+                    : '';
+
+                update();
+            }
+
+            function update() {
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
+            }
+
+            function goTo(index) {
+                if (!projects.length) return;
+                // Loop infinito: volta pro fim / começo ao passar dos limites
+                currentIndex = (index + projects.length) % projects.length;
+                update();
+            }
+
+            prevBtn.addEventListener('click', () => goTo(currentIndex - 1));
+            nextBtn.addEventListener('click', () => goTo(currentIndex + 1));
+
+            dotsContainer.addEventListener('click', (e) => {
+                const dot = e.target.closest('.carousel-dot');
+                if (dot) goTo(Number(dot.dataset.index));
+            });
+
+            // Suporte a swipe (essencial no mobile, onde está a maioria dos leads)
+            let touchStartX = 0;
+            let touchDeltaX = 0;
+
+            track.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchDeltaX = 0;
+            }, { passive: true });
+
+            track.addEventListener('touchmove', (e) => {
+                touchDeltaX = e.touches[0].clientX - touchStartX;
+            }, { passive: true });
+
+            track.addEventListener('touchend', () => {
+                const SWIPE_THRESHOLD = 40;
+                if (Math.abs(touchDeltaX) > SWIPE_THRESHOLD) {
+                    touchDeltaX < 0 ? goTo(currentIndex + 1) : goTo(currentIndex - 1);
+                }
+            });
+
+            // Navegação por teclado quando o carrossel está em foco
+            carousel.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') goTo(currentIndex - 1);
+                if (e.key === 'ArrowRight') goTo(currentIndex + 1);
+            });
+
+            fetch('projects.json')
+                .then((res) => res.json())
+                .then((data) => {
+                    projects = data;
+                    render();
+                })
+                .catch((err) => {
+                    console.error('Não foi possível carregar os projetos:', err);
+                    track.innerHTML = '<p style="padding: 20px; color: var(--text-muted);">Não foi possível carregar os projetos no momento.</p>';
+                });
+        })();
     </script>
 
 </body>
