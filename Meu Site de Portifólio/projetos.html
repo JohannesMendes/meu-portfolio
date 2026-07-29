@@ -233,6 +233,57 @@
             box-shadow: 0 10px 20px rgba(230, 0, 0, 0.15);
         }
 
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            max-width: 980px;
+            margin-left: auto;
+            margin-right: auto;
+            justify-items: center;
+            align-items: start;
+        }
+
+        .project-card {
+            width: 100%;
+            max-width: 390px;
+            background: var(--bg-card);
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(17, 17, 17, 0.08);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .project-card-content {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .project-card-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            color: var(--text-dark);
+        }
+
+        .project-card-desc {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
         /* Mensagem de Estado Vazio */
         .empty-state {
             text-align: center;
@@ -259,6 +310,7 @@
             .project-row { grid-template-columns: 1fr; gap: 35px; }
             .project-row:nth-child(even) .project-image-side { order: 0; }
             .project-info-side h2 { font-size: 1.8rem; }
+            .project-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
         }
     </style>
@@ -281,12 +333,16 @@
 
     <!-- Listagem Principal Limpa e Aguardando seus Projetos -->
     <main class="projects-container">
-        
-        <!-- PODE MANDAR A LISTA! INSERIREI OS BLOCOS DE PROJETOS EXATAMENTE AQUI -->
-        <div class="empty-state">
-            <p>Aguardando o envio dos novos projetos para popular a vitrine...</p>
+        <div class="project-grid">
+            <article class="project-card">
+                <img src="volta.png" alt="Preview do site Volta — Motos elétricas de alta performance">
+                <div class="project-card-content">
+                    <h3 class="project-card-title">Volta — Motos elétricas</h3>
+                    <p class="project-card-desc">Landing page com foco em imagem premium, velocidade e uma experiência visual moderna para produtos de mobilidade.</p>
+                    <a href="https://effulgent-marzipan-9adc10.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-view-project">Acessar Site</a>
+                </div>
+            </article>
         </div>
-
     </main>
 
     <footer>

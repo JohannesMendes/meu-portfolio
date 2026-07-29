@@ -232,7 +232,7 @@
             border-radius: 16px;
             text-align: center;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 0 auto 60px auto;
         }
 
         .portfolio-callout p {
@@ -261,6 +261,123 @@
             background-color: var(--brand-red);
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(230, 0, 0, 0.15);
+        }
+
+        .project-carousel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .carousel-arrow {
+            width: 50px;
+            height: 50px;
+            border: 1px solid rgba(17, 17, 17, 0.12);
+            background: var(--bg-card);
+            color: var(--text-dark);
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+        }
+
+        .carousel-arrow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(17, 17, 17, 0.12);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 28px;
+            margin-top: 40px;
+            max-width: 980px;
+            margin-left: auto;
+            margin-right: auto;
+            justify-items: center;
+        }
+
+        .project-card {
+            width: 100%;
+            max-width: 380px;
+            background: var(--bg-card);
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(17, 17, 17, 0.08);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-preview-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 35px;
+        }
+
+        .project-preview-actions .btn-view-all {
+            padding: 15px 38px;
+            font-size: 1rem;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 80px rgba(17, 17, 17, 0.14);
+        }
+
+        .project-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .project-card-content {
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .project-card-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            line-height: 1.2;
+            color: var(--text-dark);
+        }
+
+        .project-card-desc {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 0.98rem;
+            flex: 1;
+        }
+
+        .project-card-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 22px;
+            background-color: var(--brand-red);
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 999px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .project-card-link:hover {
+            background-color: var(--brand-red-hover);
+            transform: translateY(-1px);
         }
 
         /* Configuração do contêiner para os quadrados de fundo */
@@ -414,11 +531,19 @@
 
         @media (max-width: 992px) {
             .about-content { grid-template-columns: 1fr; gap: 40px; }
+            .project-grid { grid-template-columns: 1fr 1fr; }
             nav { padding: 20px 4%; }
             .hero { padding: 0 4%; }
             .hero h1 { font-size: 2.5rem; }
             .nav-links { display: none; }
             .tech-shape { display: none; }
+        }
+
+        @media (max-width: 700px) {
+            .project-grid { grid-template-columns: 1fr; }
+            .project-card img { height: 200px; }
+            .portfolio-callout { padding: 40px 25px; }
+            .content-section { padding: 80px 5%; }
         }
     </style>
 </head>
@@ -451,12 +576,26 @@
         <div class="scroll-indicator">Rolar para explorar</div>
     </section>
 
-    <!-- Seção de Portfólio Callout -->
     <section id="projetos" class="content-section">
         <h2 class="section-title text">Projetos</h2>
-        <div class="portfolio-callout">
-            <p>Explore a lista completa com detalhes técnicos, interfaces visuais e acesso direto às aplicações em produção.</p>
-            <a href="projetos.html" class="btn-view-all">Acessar Página de Projetos &rarr;</a>
+
+        <div class="project-carousel">
+            <button class="carousel-arrow" aria-label="Anterior projeto">&lt;</button>
+            <div class="project-grid">
+                <article class="project-card">
+                    <img src="volta.png" alt="Preview do site Volta — Motos elétricas de alta performance">
+                    <div class="project-card-content">
+                        <h3 class="project-card-title">Volta — Motos elétricas</h3>
+                        <p class="project-card-desc">Landing page com foco em imagem premium, velocidade e uma experiência visual moderna para produtos de mobilidade.</p>
+                        <a href="https://effulgent-marzipan-9adc10.netlify.app/" target="_blank" rel="noopener noreferrer" class="project-card-link">Acessar Site</a>
+                    </div>
+                </article>
+            </div>
+            <button class="carousel-arrow" aria-label="Próximo projeto">&gt;</button>
+        </div>
+
+        <div class="project-preview-actions">
+            <a href="projetos.html" class="btn-view-all">Ver Todos os Projetos</a>
         </div>
     </section>
 
