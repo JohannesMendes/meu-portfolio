@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — Depoimentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg-main: #ffffff;
+        --bg-card: #f9f9f9;
+        --text-dark: #111111;
+        --text-muted: #666666;
+        --brand-red: #e60000;
+        --brand-red-hover: #b30000;
+        --border-color: #eeeeee;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: var(--bg-main);
+        color: var(--text-dark);
+        font-family: 'Space Grotesk', sans-serif;
+        min-height: 100vh;
+        padding: 60px 6% 100px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    a.back-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+    a.back-link:hover { color: var(--brand-red); }
+    h1 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        letter-spacing: -1px;
+        margin: 20px 0 8px;
+    }
+    .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px; }
+    .warning {
+        background: #fff8e6;
+        border: 1px solid #f0d98c;
+        color: #6b5800;
+        padding: 16px 20px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin-bottom: 40px;
+    }
+    .panel {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 30px;
+        margin-bottom: 40px;
+    }
+    .panel h2 {
+        font-family: 'Syne', sans-serif;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+    }
+    input, textarea {
+        width: 100%;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.95rem;
+        padding: 12px 14px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: var(--bg-main);
+        color: var(--text-dark);
+        margin-bottom: 18px;
+        resize: vertical;
+    }
+    textarea { min-height: 90px; }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 30px;
+        border: none;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .btn-primary { background: var(--brand-red); color: #fff; }
+    .btn-primary:hover { background: var(--brand-red-hover); }
+    .btn-ghost { background: none; border: 1px solid var(--border-color); color: var(--text-dark); }
+    .btn-ghost:hover { border-color: var(--brand-red); color: var(--brand-red); }
+    .btn-danger { background: none; border: 1px solid #f0c2c2; color: var(--brand-red); padding: 6px 14px; font-size: 0.8rem; }
+    .btn-danger:hover { background: var(--brand-red); color: #fff; }
+
+    .actions-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+
+    .list-item {
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 18px 20px;
+        background: var(--bg-main);
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .list-item p { font-size: 0.95rem; line-height: 1.5; margin-bottom: 6px; }
+    .list-item .author { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.85rem; }
+    .list-item .role { color: var(--text-muted); font-weight: 400; font-size: 0.8rem; }
+    .empty { color: var(--text-muted); font-size: 0.9rem; padding: 10px 0; }
+
+    #exportOutput {
+        width: 100%;
+        min-height: 140px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+    <!-- Tela de login -->
+    <div id="loginGate" style="max-width: 380px; margin: 15vh auto 0;">
+        <h1 style="font-size: 1.6rem;">Painel de Depoimentos</h1>
+        <p class="subtitle">Acesso restrito. Digite a senha para continuar.</p>
+        <div class="warning">
+            <strong>Nível de segurança:</strong> como o site é 100% estático (sem backend/servidor), esta senha é validada no próprio navegador. Ela afasta visitantes casuais, mas não é proteção real contra alguém que abra o código-fonte da página — para segurança de verdade seria necessário um login validado por um servidor.
+        </div>
+        <form id="loginForm">
+            <label for="password">Senha</label>
+            <input id="password" type="password" required autocomplete="current-password">
+            <p id="loginError" style="display:none; color: var(--brand-red); font-size: 0.85rem; margin: -10px 0 16px;">Senha incorreta.</p>
+            <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+    </div>
+
+    <!-- Conteúdo do painel, só aparece após login -->
+    <div id="adminContent" style="display:none;">
+
+        <a href="index.html" class="back-link">&larr; Voltar ao site</a>
+        <button type="button" id="logoutBtn" class="back-link" style="background:none;border:none;cursor:pointer;float:right;">Sair &rarr;</button>
+        <h1>Painel de Depoimentos</h1>
+        <p class="subtitle">Área não listada no menu — cadastre, edite e remova os depoimentos exibidos na seção "Depoimentos" do site.</p>
+
+        <div class="warning">
+            <strong>Importante:</strong> este site é estático (sem servidor/backend), então tudo que você cadastrar aqui fica salvo apenas no <strong>localStorage deste navegador</strong>. Os visitantes do site em outros dispositivos não verão essas mudanças automaticamente. Para publicar de verdade para todo mundo, use "Exportar JSON" abaixo e cole o resultado na constante <code>DEFAULT_TESTIMONIALS</code> do arquivo <code>testimonials.js</code>, depois republique o site.
+        </div>
+
+        <div class="panel">
+            <h2>Novo depoimento</h2>
+            <form id="testimonialForm">
+                <label for="quote">Depoimento</label>
+                <textarea id="quote" required placeholder="Escreva o depoimento aqui..."></textarea>
+
+                <label for="author">Nome</label>
+                <input id="author" required placeholder="Ex: Maria Silva">
+
+                <label for="role">Cargo / Empresa (opcional)</label>
+                <input id="role" placeholder="Ex: CEO da Empresa X">
+
+                <button type="submit" class="btn btn-primary">Adicionar depoimento</button>
+            </form>
+        </div>
+
+        <div class="panel">
+            <h2>Depoimentos cadastrados neste navegador</h2>
+            <div id="list"></div>
+            <p class="empty" id="listEmpty">Nenhum depoimento cadastrado ainda.</p>
+
+            <div class="actions-row">
+                <button type="button" class="btn btn-ghost" id="exportBtn">Exportar JSON</button>
+            </div>
+            <textarea id="exportOutput" readonly></textarea>
+        </div>
+
+    </div>
+
+    <script src="testimonials.js"></script>
+    <script>
+        /* ===================================================================
+           LOGIN — proteção client-side por senha (ver aviso de segurança acima).
+           Para trocar a senha: gere um novo hash SHA-256 do texto desejado
+           (ex: no console do navegador, rode:
+           crypto.subtle.digest('SHA-256', new TextEncoder().encode('SUA_SENHA'))
+           .then(b => console.log(Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,'0')).join('')))
+           ) e substitua o valor de ADMIN_PASSWORD_HASH abaixo.
+           Senha padrão definida agora: "volta2026"
+           =================================================================== */
+        const ADMIN_SESSION_KEY = "jm_admin_authenticated";
+
+        async function sha256(text) {
+            const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+            return Array.from(new Uint8Array(buffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        // Hash SHA-256 da senha padrão "volta2026"
+        const REAL_PASSWORD_HASH = "29d74406cdb619ea8f719d75d5f9c8ae5a81d038aa2096d5cc6e14da6b1ba8cb";
+
+        const loginGate = document.getElementById('loginGate');
+        const adminContent = document.getElementById('adminContent');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        function showAdmin() {
+            loginGate.style.display = 'none';
+            adminContent.style.display = 'block';
+            renderList();
+        }
+
+        function showLogin() {
+            adminContent.style.display = 'none';
+            loginGate.style.display = 'block';
+        }
+
+        if (sessionStorage.getItem(ADMIN_SESSION_KEY) === "1") {
+            showAdmin();
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const typed = document.getElementById('password').value;
+            const hash = await sha256(typed);
+            if (hash === REAL_PASSWORD_HASH) {
+                sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
+                loginError.style.display = 'none';
+                showAdmin();
+            } else {
+                loginError.style.display = 'block';
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem(ADMIN_SESSION_KEY);
+            showLogin();
+        });
+
+        const form = document.getElementById('testimonialForm');
+        const listEl = document.getElementById('list');
+        const listEmpty = document.getElementById('listEmpty');
+        const exportBtn = document.getElementById('exportBtn');
+        const exportOutput = document.getElementById('exportOutput');
+
+        function renderList() {
+            const items = getTestimonials();
+            if (items.length === 0) {
+                listEl.innerHTML = '';
+                listEmpty.style.display = 'block';
+                return;
+            }
+            listEmpty.style.display = 'none';
+            listEl.innerHTML = items.map((t) => `
+                <div class="list-item">
+                    <div>
+                        <p>"${escapeHTML(t.quote)}"</p>
+                        <div class="author">${escapeHTML(t.author)} ${t.role ? `<span class="role">— ${escapeHTML(t.role)}</span>` : ''}</div>
+                    </div>
+                    <button type="button" class="btn btn-danger" data-id="${t.id}">Remover</button>
+                </div>
+            `).join('');
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const quote = document.getElementById('quote').value.trim();
+            const author = document.getElementById('author').value.trim();
+            const role = document.getElementById('role').value.trim();
+            if (!quote || !author) return;
+            addTestimonial({ quote, author, role });
+            form.reset();
+            renderList();
+        });
+
+        listEl.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-id]');
+            if (!btn) return;
+            deleteTestimonial(btn.dataset.id);
+            renderList();
+        });
+
+        exportBtn.addEventListener('click', () => {
+            const items = getTestimonials();
+            exportOutput.value = JSON.stringify(items, null, 4);
+            exportOutput.style.display = 'block';
+            exportOutput.select();
+        });
+    </script>
+</body>
+</html>

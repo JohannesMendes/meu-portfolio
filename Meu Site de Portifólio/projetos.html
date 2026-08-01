@@ -89,6 +89,74 @@
             color: #ff4d4d;
         }
 
+        /* Botão hambúrguer (some em telas >= 992px) */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 210;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--text-light);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .nav-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+        .nav-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .mobile-nav {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 26px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-12px);
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+        }
+
+        .mobile-nav.is-open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .mobile-nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .mobile-nav a:active,
+        .mobile-nav a:hover {
+            color: var(--brand-red);
+        }
+
+        body.nav-open { overflow: hidden; }
+
         .page-header {
             padding: 160px 8% 60px 8%;
             background: var(--bg-card);
@@ -316,6 +384,7 @@
             .project-info-side h2 { font-size: 1.8rem; }
             .project-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
+            .nav-toggle { display: flex; }
         }
 
         @media (max-width: 480px) {
@@ -336,7 +405,16 @@
             <a href="index.html#projetos">Portfólio</a>
             <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank">Contato</a>
         </div>
+        <button type="button" class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
+
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html#sobre">Sobre</a>
+        <a href="index.html#projetos">Portfólio</a>
+        <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank">Contato</a>
+    </div>
 
     <header class="page-header">
         <h1 class="text">Meus <span>Projetos</span></h1>
@@ -357,6 +435,35 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
     <script>
         gsap.registerPlugin(SplitText, ScrambleTextPlugin);
+
+        // Menu hambúrguer (mobile/tablet)
+        (function () {
+            const toggle = document.getElementById('navToggle');
+            const panel = document.getElementById('mobileNav');
+            if (!toggle || !panel) return;
+
+            function closeMenu() {
+                toggle.classList.remove('is-open');
+                toggle.setAttribute('aria-expanded', 'false');
+                panel.classList.remove('is-open');
+                document.body.classList.remove('nav-open');
+            }
+
+            toggle.addEventListener('click', () => {
+                const isOpen = panel.classList.toggle('is-open');
+                toggle.classList.toggle('is-open', isOpen);
+                toggle.setAttribute('aria-expanded', String(isOpen));
+                document.body.classList.toggle('nav-open', isOpen);
+            });
+
+            panel.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('click', closeMenu);
+            });
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 992) closeMenu();
+            });
+        })();
 
         // Animação de "flutuar" em loop nos títulos grandes (preto/vermelho)
         // Velocidade de 1.20s por movimento + pausa de 8s entre os ciclos

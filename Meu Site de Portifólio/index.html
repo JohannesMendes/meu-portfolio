@@ -67,7 +67,7 @@
 
         .nav-links {
             display: flex;
-            gap: 40px;
+            gap: 28px;
         }
 
         .nav-links a {
@@ -86,6 +86,75 @@
             opacity: 1;
             color: #ff4d4d;
         }
+
+        /* Botão hambúrguer (some em telas >= 992px) */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 210;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--text-light);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .nav-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+        .nav-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* Painel de navegação mobile (menu hambúrguer) */
+        .mobile-nav {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 26px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-12px);
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+        }
+
+        .mobile-nav.is-open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .mobile-nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .mobile-nav a:active,
+        .mobile-nav a:hover {
+            color: var(--brand-red);
+        }
+
+        body.nav-open { overflow: hidden; }
 
         /* Seção Hero */
         .hero {
@@ -218,7 +287,7 @@
         }
 
         section.content-section {
-            padding: 120px 8%;
+            padding: 160px 8%;
             border-bottom: 1px solid var(--border-color);
             background: var(--bg-main);
             position: relative;
@@ -229,7 +298,7 @@
             font-size: clamp(2.3rem, 4vw, 3.5rem);
             font-weight: 800;
             text-transform: uppercase;
-            margin-bottom: 30px;
+            margin-bottom: 44px;
             letter-spacing: -1px;
             hyphens: none;
             -webkit-hyphens: none;
@@ -574,11 +643,302 @@
             font-size: 0.95rem;
         }
 
+        /* ===================================================================
+           NOVAS SEÇÕES — adicionadas para deixar a jornada de scroll mais
+           longa e completa, sem alterar nenhum bloco já existente acima.
+           =================================================================== */
+
+        /* Marquee: faixa de tecnologias correndo infinitamente */
+        .marquee {
+            width: 100%;
+            overflow: hidden;
+            background: var(--text-dark);
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            gap: 40px;
+            animation: marquee-scroll 28s linear infinite;
+        }
+
+        .marquee-track span {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+
+        .marquee-track span.dot {
+            color: var(--brand-red);
+        }
+
+        @keyframes marquee-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* Serviços */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .service-card {
+            background: var(--bg-main);
+            padding: 40px 30px;
+            transition: background 0.3s ease;
+        }
+
+        .service-card:hover {
+            background: var(--bg-card);
+        }
+
+        .service-number {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            color: var(--brand-red);
+            font-size: 0.9rem;
+            margin-bottom: 18px;
+            display: block;
+        }
+
+        .service-card h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Conquistas / Milestones */
+        .milestones-section {
+            background: var(--text-dark);
+            padding: 140px 8%;
+        }
+
+        .milestones-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+
+        .milestone-item .milestone-number {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.2rem, 4vw, 3.2rem);
+            font-weight: 800;
+            color: var(--text-light);
+            letter-spacing: -1px;
+        }
+
+        .milestone-item .milestone-label {
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 6px;
+        }
+
+        /* Sobre Mim expandido */
+        .about-photo-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+        }
+
+        .about-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .about-photo-fallback {
+            display: none;
+            position: absolute;
+            inset: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(160deg, var(--bg-card), #f1f1f1);
+        }
+
+        .about-photo-fallback.is-visible {
+            display: flex;
+        }
+
+        .about-photo-initials {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 3rem;
+            color: var(--text-dark);
+            width: 92px;
+            height: 92px;
+            border-radius: 50%;
+            border: 2px solid var(--brand-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-photo-fallback small {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            max-width: 220px;
+            line-height: 1.5;
+        }
+
+        .about-philosophy {
+            border-left: 3px solid var(--brand-red);
+            padding-left: 18px;
+            margin-top: 24px;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        /* Depoimentos */
+        .testimonials-section {
+            background: var(--bg-card);
+        }
+
+        .testimonials-empty {
+            display: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .testimonial-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 30px;
+        }
+
+        .testimonial-quote {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .testimonial-author span {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
+
+        /* Contato: linha extra de redes sociais, abaixo do CTA existente */
+        .contact-extra {
+            margin-top: 36px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .contact-socials {
+            display: flex;
+            gap: 16px;
+        }
+
+        .contact-socials a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-bottom: 1px solid transparent;
+        }
+
+        .contact-socials a:hover {
+            color: var(--text-dark);
+            border-bottom-color: var(--brand-red);
+        }
+
+        /* Link discreto (mas legível) para o painel administrativo, no rodapé */
+        .admin-hidden-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            opacity: 0.6;
+            transition: opacity 0.3s ease, color 0.3s ease;
+        }
+
+        .admin-hidden-link:hover {
+            opacity: 1;
+            color: var(--brand-red);
+        }
+
+        /* Reveal ao rolar (usado pelo ScrollTrigger) */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        @media (max-width: 992px) {
+            .services-grid { grid-template-columns: 1fr; }
+            .milestones-grid { grid-template-columns: repeat(2, 1fr); gap: 30px 20px; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 700px) {
+            .marquee-track span { font-size: 0.9rem; }
+            .service-card { padding: 28px 22px; }
+            .milestones-section { padding: 50px 6%; }
+            .milestone-item .milestone-number { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+            .milestones-grid { grid-template-columns: 1fr; gap: 30px; }
+            .testimonial-card { padding: 22px; }
+            .testimonial-quote { font-size: 0.95rem; }
+            .contact-socials { gap: 20px; }
+            .contact-extra { margin-top: 24px; flex-direction: column; gap: 14px; }
+        }
+
         @media (max-width: 992px) {
             .about-content { grid-template-columns: 1fr; gap: 40px; }
             nav { padding: 20px 4%; }
             .hero { padding: 0 4%; padding-top: 90px; padding-bottom: 60px; }
             .nav-links { display: none; }
+            .nav-toggle { display: flex; }
             .tech-shape { display: none; }
         }
 
@@ -639,6 +999,11 @@
             nav { padding: 16px 5%; }
             .logo { font-size: 1.15rem; }
             .hero h1 { font-size: clamp(1.6rem, 8.5vw, 2rem); letter-spacing: -0.3px; }
+            .section-title {
+                font-size: clamp(1.5rem, 8vw, 2rem);
+                letter-spacing: -0.5px;
+                word-spacing: normal;
+            }
             .skills-grid { grid-template-columns: 1fr; }
             .btn-whatsapp { padding: 11px 24px; font-size: 0.85rem; width: auto; justify-content: center; }
             .contact { padding: 32px 6%; min-height: 65vh; min-height: 65svh; }
@@ -658,11 +1023,24 @@
     <nav>
         <div class="logo"><span class="logo-scramble">JO</span><span class="logo-scramble-accent">_ENG</span></div>
         <div class="nav-links">
+            <a href="#servicos">Serviços</a>
             <a href="#sobre">Sobre</a>
             <a href="projetos.html">Projetos</a>
+            <a href="#depoimentos">Depoimentos</a>
             <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank">Contato</a>
         </div>
+        <button type="button" class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
+
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#servicos">Serviços</a>
+        <a href="#sobre">Sobre</a>
+        <a href="projetos.html">Projetos</a>
+        <a href="#depoimentos">Depoimentos</a>
+        <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank">Contato</a>
+    </div>
 
     <section class="hero">
         <video class="video-background" autoplay loop muted playsinline>
@@ -680,6 +1058,36 @@
         </div>
 
         <div class="scroll-indicator">Rolar para explorar</div>
+    </section>
+
+    <!-- Marquee: faixa de tecnologias -->
+    <div class="marquee">
+        <div class="marquee-track">
+            <span>React</span><span class="dot">•</span><span>Next.js</span><span class="dot">•</span><span>TypeScript</span><span class="dot">•</span><span>Python</span><span class="dot">•</span><span>FastAPI</span><span class="dot">•</span><span>Flutter</span><span class="dot">•</span><span>Tailwind CSS</span><span class="dot">•</span>
+            <span>React</span><span class="dot">•</span><span>Next.js</span><span class="dot">•</span><span>TypeScript</span><span class="dot">•</span><span>Python</span><span class="dot">•</span><span>FastAPI</span><span class="dot">•</span><span>Flutter</span><span class="dot">•</span><span>Tailwind CSS</span><span class="dot">•</span>
+        </div>
+    </div>
+
+    <!-- Serviços / O que eu faço -->
+    <section id="servicos" class="content-section reveal-up">
+        <h2 class="section-title text">O que eu <span>faço</span></h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <span class="service-number">01</span>
+                <h3>Frontend</h3>
+                <p>Interfaces rápidas e responsivas com React, Next.js e animações que dão vida à experiência do usuário.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-number">02</span>
+                <h3>Backend</h3>
+                <p>APIs e arquiteturas robustas com Python/FastAPI, integrações e persistência de dados pensadas para escalar.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-number">03</span>
+                <h3>UI/UX Design</h3>
+                <p>Design de produto com identidade própria — sem templates genéricos, priorizando clareza e conversão.</p>
+            </div>
+        </div>
     </section>
 
     <section id="projetos" class="content-section">
@@ -702,6 +1110,28 @@
         </div>
     </section>
 
+    <!-- Conquistas / Milestones -->
+    <section class="milestones-section reveal-up">
+        <div class="milestones-grid">
+            <div class="milestone-item">
+                <div class="milestone-number" data-count-target="1" id="milestoneCount">0</div>
+                <div class="milestone-label">Projeto em destaque</div>
+            </div>
+            <div class="milestone-item">
+                <div class="milestone-number">Full-Stack</div>
+                <div class="milestone-label">Frontend + Backend + Mobile + Desktop</div>
+            </div>
+            <div class="milestone-item">
+                <div class="milestone-number">Sob Medida</div>
+                <div class="milestone-label">Foco em performance &amp; UX</div>
+            </div>
+            <div class="milestone-item">
+                <div class="milestone-number">Desde 2025</div>
+                <div class="milestone-label">Em atividade contínua</div>
+            </div>
+        </div>
+    </section>
+
     <!-- Seção Sobre Mim -->
     <section id="sobre" class="content-section about-section-container">
         <div class="tech-shape shape-1"></div>
@@ -712,8 +1142,16 @@
         <h2 class="section-title text">Sobre <span>Mim</span></h2>
         <div class="about-content">
             <div class="about-text">
+                <div class="about-photo-wrap">
+                    <img src="sua-foto.jpg" alt="Foto de Johannes Mendes" class="about-photo" id="aboutPhoto" onerror="this.onerror=null; this.style.display='none'; document.getElementById('aboutPhotoFallback').classList.add('is-visible');">
+                    <div class="about-photo-fallback" id="aboutPhotoFallback">
+                        <span class="about-photo-initials">JM</span>
+                        <small>Adicione o arquivo "sua-foto.jpg" na pasta do site para exibir sua foto aqui</small>
+                    </div>
+                </div>
                 <p>Estudante de Engenharia de Software, desenvolvo aplicações completas integrando lógica robusta com experiências visuais fluidas e responsivas.</p>
                 <p>Busco otimizar a arquitetura e a estabilidade de dados para construir sistemas modulares e limpos, prontos para solucionar desafios digitais reais de alto nível.</p>
+                <p class="about-philosophy">"Código limpo e design com intenção — nada genérico, nada de template. Cada projeto nasce de um problema real que vale a pena resolver bem."</p>
             </div>
             <div class="skills-box">
                 <h3>Core Stack</h3>
@@ -728,22 +1166,39 @@
         </div>
     </section>
 
+    <!-- Depoimentos -->
+    <section id="depoimentos" class="content-section testimonials-section reveal-up">
+        <h2 class="section-title text">Depoimentos</h2>
+        <div class="testimonials-grid" id="testimonialsGrid"></div>
+        <p class="testimonials-empty" id="testimonialsEmpty">Novos depoimentos em breve.</p>
+    </section>
+
     <!-- Contato -->
     <section id="contato" class="contact">
         <h2 class="section-title text">Vamos iniciar uma <span>parceria?</span></h2>
         <p>Seja para criar um sistema do zero ou otimizar uma plataforma existente, entre em contato.</p>
         <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank" class="btn-whatsapp">Conectar no WhatsApp</a>
+
+        <div class="contact-extra">
+            <div class="contact-socials">
+                <a href="#" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="#" target="_blank" rel="noopener noreferrer">Instagram</a>
+            </div>
+        </div>
     </section>
 
     <footer>
         <div>&copy; 2026 Johannes Mendes. Todos os direitos reservados.</div>
+        <a href="admin.html" class="admin-hidden-link" aria-label="Painel administrativo" title="Painel administrativo">Admin</a>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+    <script src="testimonials.js"></script>
     <script>
-        gsap.registerPlugin(SplitText, ScrambleTextPlugin);
+        gsap.registerPlugin(SplitText, ScrambleTextPlugin, ScrollTrigger);
 
         // Animação em loop nos títulos grandes (preto/vermelho)
         // ATUALIZADO: repeatDelay: 3 e duration: 1.02 configurados conforme solicitado
@@ -902,6 +1357,81 @@
                     track.innerHTML = '<p style="padding: 20px; color: var(--text-muted);">Não foi possível carregar os projetos no momento.</p>';
                 });
         })();
+    </script>
+
+    <script>
+        /* ===================================================================
+           NOVAS SEÇÕES — animações de entrada, contador e utilidades
+           =================================================================== */
+
+        // Menu hambúrguer (mobile/tablet)
+        (function () {
+            const toggle = document.getElementById('navToggle');
+            const panel = document.getElementById('mobileNav');
+            if (!toggle || !panel) return;
+
+            function closeMenu() {
+                toggle.classList.remove('is-open');
+                toggle.setAttribute('aria-expanded', 'false');
+                panel.classList.remove('is-open');
+                document.body.classList.remove('nav-open');
+            }
+
+            toggle.addEventListener('click', () => {
+                const isOpen = panel.classList.toggle('is-open');
+                toggle.classList.toggle('is-open', isOpen);
+                toggle.setAttribute('aria-expanded', String(isOpen));
+                document.body.classList.toggle('nav-open', isOpen);
+            });
+
+            panel.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('click', closeMenu);
+            });
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 992) closeMenu();
+            });
+        })();
+
+        // Reveal suave ao rolar para as novas seções (não mexe no que já existia)
+        gsap.utils.toArray(".reveal-up").forEach((el) => {
+            gsap.to(el, {
+                opacity: 1,
+                y: 0,
+                duration: 0.9,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%",
+                    once: true
+                }
+            });
+        });
+
+        // Contador simples para o milestone de "Projetos em destaque"
+        (function () {
+            const counter = document.getElementById('milestoneCount');
+            if (!counter) return;
+            const target = Number(counter.dataset.countTarget || 0);
+            ScrollTrigger.create({
+                trigger: counter,
+                start: "top 90%",
+                once: true,
+                onEnter: () => {
+                    gsap.fromTo(counter, { innerText: 0 }, {
+                        innerText: target,
+                        duration: 1.2,
+                        snap: { innerText: 1 },
+                        ease: "power1.out"
+                    });
+                }
+            });
+        })();
+
+        // Renderiza os depoimentos cadastrados via /admin.html (ou os
+        // padrão definidos em testimonials.js). Sem exemplos fictícios:
+        // se não houver nenhum, mostra um estado vazio.
+        renderTestimonials('#testimonialsGrid', '#testimonialsEmpty');
     </script>
 
 </body>
