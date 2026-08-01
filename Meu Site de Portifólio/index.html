@@ -151,6 +151,10 @@
             max-width: 900px;
             text-wrap: balance;
             text-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+            hyphens: none;
+            -webkit-hyphens: none;
+            word-break: keep-all;
+            overflow-wrap: normal;
         }
 
         .hero p {
@@ -227,6 +231,10 @@
             text-transform: uppercase;
             margin-bottom: 30px;
             letter-spacing: -1px;
+            hyphens: none;
+            -webkit-hyphens: none;
+            word-break: keep-all;
+            overflow-wrap: normal;
         }
 
         .section-title span {
@@ -522,6 +530,10 @@
             text-align: center;
             background: #fffafa;
             padding: 120px 8%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .contact p {
@@ -572,29 +584,65 @@
 
         @media (max-width: 700px) {
             .project-card img { height: 200px; }
-            .portfolio-callout { padding: 40px 25px; }
-            .content-section { padding: 70px 6%; }
-            .section-title { margin-bottom: 20px; }
+            .portfolio-callout { padding: 32px 22px; margin-bottom: 40px; }
+            .content-section { padding: 56px 6%; }
+            .section-title { margin-bottom: 16px; font-size: clamp(1.9rem, 7vw, 2.6rem); }
+            .about-content { gap: 28px; }
 
-            /* Hero: texto, tag e botões ajustados para não cortar em telas de celular */
-            .hero-tag { font-size: 0.75rem; padding: 5px 14px; margin-bottom: 20px; }
-            .hero p { max-width: 100%; margin-bottom: 32px; }
-            .hero-btn-container { flex-direction: column; align-items: stretch; gap: 12px; width: 100%; }
-            .btn-glass-light, .btn-glass-trans { text-align: center; width: 100%; padding: 15px 20px; }
-            .scroll-indicator { bottom: 20px; font-size: 0.8rem; }
+            /* Hero: título e subtítulo compactados para não quebrar de forma estranha */
+            .hero { padding-top: 80px; padding-bottom: 40px; }
+            .hero-tag { font-size: 0.7rem; padding: 5px 12px; margin-bottom: 16px; }
+            .hero h1 {
+                font-size: clamp(1.9rem, 7.5vw, 2.5rem);
+                line-height: 1.2;
+                letter-spacing: -0.5px;
+                margin-bottom: 14px;
+            }
+            .hero p {
+                font-size: 0.95rem;
+                line-height: 1.5;
+                max-width: 100%;
+                margin-bottom: 22px;
+            }
+            .hero-btn-container { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
+            .btn-glass-light, .btn-glass-trans {
+                text-align: center;
+                width: 100%;
+                padding: 11px 20px;
+                font-size: 0.9rem;
+            }
+            .scroll-indicator { bottom: 16px; font-size: 0.75rem; }
 
             /* Carrossel de projetos: setas menores e melhor toque em mobile */
             .carousel-arrow { width: 44px; height: 44px; font-size: 1rem; flex-shrink: 0; }
             .project-carousel { gap: 10px; }
+
+            /* Contato: bloco compacto e centralizado, sem espaço excessivo */
+            .contact {
+                padding: 40px 6%;
+                min-height: 70vh;
+                min-height: 70svh;
+            }
+            .contact p {
+                font-size: 1rem;
+                line-height: 1.5;
+                margin: 0 auto 24px auto;
+            }
+            .btn-whatsapp {
+                padding: 12px 28px;
+                font-size: 0.9rem;
+                width: auto;
+            }
         }
 
         @media (max-width: 420px) {
             nav { padding: 16px 5%; }
             .logo { font-size: 1.15rem; }
-            .hero h1 { letter-spacing: -1px; }
+            .hero h1 { font-size: clamp(1.6rem, 8.5vw, 2rem); letter-spacing: -0.3px; }
             .skills-grid { grid-template-columns: 1fr; }
-            .btn-whatsapp { padding: 16px 28px; font-size: 1rem; width: 100%; justify-content: center; }
-            .contact p { font-size: 1.05rem; }
+            .btn-whatsapp { padding: 11px 24px; font-size: 0.85rem; width: auto; justify-content: center; }
+            .contact { padding: 32px 6%; min-height: 65vh; min-height: 65svh; }
+            .contact p { font-size: 0.95rem; }
         }
 
         /* Telas muito baixas (celular em paisagem): reduz a altura mínima do hero
@@ -700,7 +748,10 @@
         // Animação em loop nos títulos grandes (preto/vermelho)
         // ATUALIZADO: repeatDelay: 3 e duration: 1.02 configurados conforme solicitado
         document.fonts.ready.then(() => {
-            const chars = SplitText.create(".text", { type: "chars" });
+            // "words, chars" preserva o agrupamento por palavra (cada palavra vira um
+            // contêiner com white-space:nowrap), evitando que a linha quebre no meio
+            // de uma palavra como aconteceria usando somente "chars".
+            const chars = SplitText.create(".text", { type: "words, chars" });
             chars.chars.forEach((ch, i) => {
                 gsap.timeline({
                     repeat: -1,
@@ -721,23 +772,28 @@
         });
 
         // Animação de "scramble" em loop no logo JO_ENG
-        const logoParts = [".logo-scramble", ".logo-scramble-accent"];
-        const logoOriginal = { ".logo-scramble": "JO", ".logo-scramble-accent": "_ENG" };
-        logoParts.forEach((sel) => {
-            const tl = gsap.timeline({ 
-                repeat: -1, 
-                repeatDelay: 4 
+        // Desativada em mobile: em telas pequenas o efeito aparecia como uma
+        // linha de caracteres estranhos no topo da tela, então mantemos o
+        // logo estático ali e só rodamos o glitch em telas maiores (>700px).
+        if (window.matchMedia("(min-width: 701px)").matches) {
+            const logoParts = [".logo-scramble", ".logo-scramble-accent"];
+            const logoOriginal = { ".logo-scramble": "JO", ".logo-scramble-accent": "_ENG" };
+            logoParts.forEach((sel) => {
+                const tl = gsap.timeline({ 
+                    repeat: -1, 
+                    repeatDelay: 4 
+                });
+                tl.to(sel, {
+                    scrambleText: { text: "§¶•†‡ÆØÅ", speed: 0.6 },
+                    duration: 0.7 
+                })
+                .to(sel, {
+                    scrambleText: { text: logoOriginal[sel], speed: 0.4 },
+                    duration: 0.7, 
+                    delay: 0.6 
+                });
             });
-            tl.to(sel, {
-                scrambleText: { text: "§¶•†‡ÆØÅ", speed: 0.6 },
-                duration: 0.7 
-            })
-            .to(sel, {
-                scrambleText: { text: logoOriginal[sel], speed: 0.4 },
-                duration: 0.7, 
-                delay: 0.6 
-            });
-        });
+        }
     </script>
 
     <script>
