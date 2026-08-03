@@ -868,6 +868,96 @@
             margin-top: 2px;
         }
 
+        /* Rodapé do card: autor + botão de curtir lado a lado */
+        .testimonial-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* Botão de curtir (from Uiverse.io by Priyanshu02020, adaptado) */
+        .testimonial-like-button {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-shrink: 0;
+            height: 40px;
+            width: 112px;
+            border-radius: 14px;
+            border: none;
+            background-color: #1d1d1d;
+            overflow: hidden;
+            box-shadow:
+                inset -2px -2px 5px rgba(255, 255, 255, 0.2),
+                inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+                4px 4px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .testimonial-like-button input[type="checkbox"] {
+            display: none;
+        }
+
+        .testimonial-like-button .like {
+            width: 70%;
+            height: 100%;
+            display: flex;
+            cursor: pointer;
+            align-items: center;
+            justify-content: space-evenly;
+        }
+
+        .testimonial-like-icon {
+            fill: #505050;
+            height: 22px;
+            width: 22px;
+        }
+
+        .testimonial-like-text {
+            color: #fcfcfc;
+            font-size: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .testimonial-like-count {
+            position: absolute;
+            right: 0;
+            width: 30%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #717070;
+            font-size: 13px;
+            border-left: 2px solid #4e4e4e;
+            transition: all 0.5s ease-out;
+        }
+
+        .testimonial-like-count.two {
+            transform: translateY(40px);
+        }
+
+        .testimonial-like-button input:checked ~ .like .testimonial-like-icon {
+            fill: var(--brand-red);
+            animation: testimonial-like-enlarge 0.2s ease-out 1;
+            transition: all 0.2s ease-out;
+        }
+
+        .testimonial-like-button input:checked ~ .testimonial-like-count.two {
+            transform: translateX(0);
+            color: #fcfcfc;
+        }
+
+        .testimonial-like-button input:checked ~ .testimonial-like-count.one {
+            transform: translateY(-40px);
+        }
+
+        @keyframes testimonial-like-enlarge {
+            0% { transform: scale(0.5); }
+            100% { transform: scale(1.2); }
+        }
+
         /* Contato: linha extra de redes sociais, abaixo do CTA existente */
         .contact-extra {
             margin-top: 36px;
@@ -1225,6 +1315,7 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
     <script src="testimonials.js"></script>
+    <script src="animations/click-spark.js"></script>
     <script>
         gsap.registerPlugin(SplitText, ScrambleTextPlugin, ScrollTrigger);
 
