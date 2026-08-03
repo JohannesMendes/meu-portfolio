@@ -1116,10 +1116,10 @@
         </div>
     </section>
 
-    <section id="projetos" class="content-section">
+    <section id="projetos" class="content-section" data-aos="fade-up">
         <h2 class="section-title text">Projetos</h2>
 
-        <div class="project-carousel">
+        <div class="project-carousel" data-aos="fade-up">
             <button class="carousel-arrow carousel-arrow-prev" aria-label="Projeto anterior" type="button">&lt;</button>
             <div class="project-carousel-viewport">
                 <div class="project-grid" id="projectTrack" aria-live="polite">
@@ -1137,7 +1137,7 @@
     </section>
 
     <!-- Conquistas / Milestones -->
-    <section class="milestones-section reveal-up">
+    <section class="milestones-section reveal-up" data-aos="fade-up">
         <div class="milestones-grid">
             <div class="milestone-item">
                 <div class="milestone-number" data-count-target="1" id="milestoneCount">0</div>
@@ -1159,7 +1159,7 @@
     </section>
 
     <!-- Seção Sobre Mim -->
-    <section id="sobre" class="content-section about-section-container">
+    <section id="sobre" class="content-section about-section-container" data-aos="fade-up">
         <div class="tech-shape shape-1"></div>
         <div class="tech-shape shape-2"></div>
         <div class="tech-shape shape-3"></div>
@@ -1193,14 +1193,14 @@
     </section>
 
     <!-- Depoimentos -->
-    <section id="depoimentos" class="content-section testimonials-section reveal-up">
+    <section id="depoimentos" class="content-section testimonials-section reveal-up" data-aos="fade-up">
         <h2 class="section-title text">Depoimentos</h2>
-        <div class="testimonials-grid" id="testimonialsGrid"></div>
+        <div class="testimonials-grid" id="testimonialsGrid" data-aos="fade-up"></div>
         <p class="testimonials-empty" id="testimonialsEmpty">Novos depoimentos em breve.</p>
     </section>
 
     <!-- Contato -->
-    <section id="contato" class="contact">
+    <section id="contato" class="contact" data-aos="fade-up">
         <h2 class="section-title text">Vamos iniciar uma <span>parceria?</span></h2>
         <p>Seja para criar um sistema do zero ou otimizar uma plataforma existente, entre em contato.</p>
         <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank" class="btn-whatsapp">Conectar no WhatsApp</a>
@@ -1219,7 +1219,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@0.2.38/dist/lenis.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" integrity="sha512-ZtNq7CsHXW0vzwj3K1MX9VvZz8cKGXO6k985v9dRMLhss7qLnsWfQzvDYb2tV1bAkgctcf7ZzMJ4myR8V7I4hQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
@@ -1275,11 +1275,8 @@
         requestAnimationFrame(raf);
 
         AOS.init({
-            duration: 900,
-            easing: 'ease-out-cubic',
-            once: true,
-            mirror: false,
-            offset: 100,
+            duration: 800,
+            once: true
         });
 
         document.querySelectorAll('a[href^="#"]').forEach((link) => {
