@@ -162,16 +162,16 @@
         <p class="subtitle">Área não listada no menu — cadastre, edite e remova os depoimentos exibidos na seção "Depoimentos" do site.</p>
 
         <div class="warning">
-            <strong>Importante:</strong> este site é estático (sem servidor/backend), então tudo que você cadastrar aqui fica salvo apenas no <strong>localStorage deste navegador</strong>. Os visitantes do site em outros dispositivos não verão essas mudanças automaticamente. Para publicar de verdade para todo mundo, use "Exportar JSON" abaixo e cole o resultado na constante <code>DEFAULT_TESTIMONIALS</code> do arquivo <code>testimonials.js</code>, depois republique o site.
+            <strong>Importante:</strong> este painel salva os depoimentos apenas no <strong>localStorage deste navegador</strong> — é só um rascunho para você organizar o texto antes de publicar. Para o depoimento aparecer no site para <strong>todo mundo</strong>, clique em "Exportar JSON" abaixo, copie o resultado e me envie (ou cole na constante <code>DEFAULT_TESTIMONIALS</code> do arquivo <code>src/data/content.js</code> do projeto React, se for publicar você mesmo).
         </div>
 
         <div class="panel">
             <h2>Novo depoimento</h2>
             <form id="testimonialForm">
-                <label for="quote">Depoimento</label>
-                <textarea id="quote" required placeholder="Escreva o depoimento aqui..."></textarea>
+                <label for="quote">Texto do depoimento (o que a pessoa disse sobre você)</label>
+                <textarea id="quote" required placeholder="Ex: O produto superou minhas expectativas..."></textarea>
 
-                <label for="author">Nome</label>
+                <label for="author">Nome de quem escreveu o depoimento</label>
                 <input id="author" required placeholder="Ex: Maria Silva">
 
                 <label for="role">Cargo / Empresa (opcional)</label>
