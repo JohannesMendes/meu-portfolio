@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Projetos | Johannes Mendes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --bg-card: #f9f9f9;
+            --text-dark: #111111;
+            --text-light: #ffffff;
+            --text-muted: #666666;
+            --brand-red: #e60000;
+            --brand-red-hover: #b30000;
+            --border-color: #eeeeee;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        img, svg, canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            text-decoration: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+            user-select: none;
+        }
+
+        .logo-scramble-accent {
+            color: #ff4d4d;
+            text-shadow: 0 0 1px rgba(255, 77, 77, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: #ff4d4d;
+        }
+
+        /* Botão hambúrguer (some em telas >= 992px) */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 210;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--text-light);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .nav-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+        .nav-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .mobile-nav {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 26px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-12px);
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+        }
+
+        .mobile-nav.is-open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .mobile-nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .mobile-nav a:active,
+        .mobile-nav a:hover {
+            color: var(--brand-red);
+        }
+
+        body.nav-open { overflow: hidden; }
+
+        .page-header {
+            padding: 160px 8% 60px 8%;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+            hyphens: none;
+            -webkit-hyphens: none;
+            word-break: keep-all;
+            overflow-wrap: normal;
+        }
+
+        .page-header h1 span {
+            color: var(--brand-red);
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+        }
+
+        .projects-container {
+            padding: 80px 8%;
+            display: flex;
+            flex-direction: column;
+            gap: 100px;
+        }
+
+        /* Estrutura Base das Linhas de Projeto */
+        .project-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .project-row:nth-child(even) .project-image-side {
+            order: 2;
+        }
+
+        .project-image-side {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 16 / 10;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .project-image-side img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: scale 0.5s ease;
+        }
+
+        .project-image-side:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .project-image-side:hover img {
+            scale: 1.03;
+        }
+
+        .project-info-side {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .project-meta {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.9rem;
+            color: var(--brand-red);
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .project-info-side h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.2rem;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+            color: var(--text-dark);
+        }
+
+        .project-info-side p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 35px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-dark);
+            background: var(--bg-card);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-view-project {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 30px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+            background-color: var(--text-dark);
+            border: none;
+            text-decoration: none;
+            text-transform: uppercase;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view-project:hover {
+            background-color: var(--brand-red);
+            transform: translateX(4px);
+            box-shadow: 0 10px 20px rgba(230, 0, 0, 0.15);
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            max-width: 980px;
+            margin-left: auto;
+            margin-right: auto;
+            justify-items: center;
+            align-items: start;
+        }
+
+        .project-card {
+            width: 100%;
+            max-width: 390px;
+            background: var(--bg-card);
+            border: 1px solid rgba(17, 17, 17, 0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(17, 17, 17, 0.08);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .project-card-content {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .project-card-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            color: var(--text-dark);
+        }
+
+        .project-card-desc {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* Mensagem de Estado Vazio */
+        .empty-state {
+            text-align: center;
+            padding: 80px 0;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        footer {
+            padding: 40px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            background: var(--bg-card);
+        }
+
+        @media (max-width: 992px) {
+            nav { padding: 20px 4%; }
+            .page-header { padding: 140px 4% 40px 4%; }
+            .projects-container { padding: 60px 4%; gap: 70px; }
+            .project-row { grid-template-columns: 1fr; gap: 35px; }
+            .project-row:nth-child(even) .project-image-side { order: 0; }
+            .project-info-side h2 { font-size: 1.8rem; }
+            .project-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .nav-toggle { display: flex; }
+        }
+
+        @media (max-width: 480px) {
+            .page-header { padding: 120px 5% 35px 5%; }
+            .page-header p { font-size: 1.05rem; }
+            .project-card-title { font-size: 1.5rem; }
+            .project-card-content { padding: 22px; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo"><span class="logo-scramble">JO</span><span class="logo-scramble-accent">_ENG</span></a>
+        <div class="nav-links">
+            <a href="index.html#sobre">Sobre</a>
+            <a href="index.html#projetos">Portfólio</a>
+            <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank">Contato</a>
+        </div>
+        <button type="button" class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html#sobre">Sobre</a>
+        <a href="index.html#projetos">Portfólio</a>
+        <a href="https://wa.me/553291260615?text=Olá,%20Johannes!%20Achei%20seu%20contato%20através%20do%20seu%20portfólio%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto." target="_blank">Contato</a>
+    </div>
+
+    <header class="page-header">
+        <h1 class="text">Meus <span>Projetos</span></h1>
+        <p>Uma vitrine detalhada das soluções de engenharia, sistemas web reativos e designs de interfaces desenvolvidos sob medida.</p>
+    </header>
+
+    <!-- Listagem Principal: preenchida dinamicamente a partir de projects.json -->
+    <main class="projects-container">
+        <div class="project-grid" id="projectsGrid"></div>
+    </main>
+
+    <footer>
+        <div>&copy; 2026 Johannes Mendes. Todos os direitos reservados.</div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+    <script src="animations/click-spark.js"></script>
+    <script>
+        gsap.registerPlugin(SplitText, ScrambleTextPlugin);
+
+        // Menu hambúrguer (mobile/tablet)
+        (function () {
+            const toggle = document.getElementById('navToggle');
+            const panel = document.getElementById('mobileNav');
+            if (!toggle || !panel) return;
+
+            function closeMenu() {
+                toggle.classList.remove('is-open');
+                toggle.setAttribute('aria-expanded', 'false');
+                panel.classList.remove('is-open');
+                document.body.classList.remove('nav-open');
+            }
+
+            toggle.addEventListener('click', () => {
+                const isOpen = panel.classList.toggle('is-open');
+                toggle.classList.toggle('is-open', isOpen);
+                toggle.setAttribute('aria-expanded', String(isOpen));
+                document.body.classList.toggle('nav-open', isOpen);
+            });
+
+            panel.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('click', closeMenu);
+            });
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 992) closeMenu();
+            });
+        })();
+
+        // Animação de "flutuar" em loop nos títulos grandes (preto/vermelho)
+        // Velocidade de 1.20s por movimento + pausa de 8s entre os ciclos
+        document.fonts.ready.then(() => {
+            // "words, chars" preserva o agrupamento por palavra e evita quebra no meio da palavra
+            const chars = SplitText.create(".text", { type: "words, chars" });
+            chars.chars.forEach((ch, i) => {
+                gsap.timeline({
+                    repeat: -1,
+                    repeatDelay: 8,
+                    delay: i * 0.3
+                })
+                .to(ch, {
+                    y: -15,
+                    duration: 1.2,
+                    ease: "sine.inOut"
+                })
+                .to(ch, {
+                    y: 0,
+                    duration: 1.2,
+                    ease: "sine.inOut"
+                });
+            });
+        });
+
+        // Animação de "scramble" em loop no logo JO_ENG
+        // Velocidade normal (original) + pausa de 10s entre os ciclos
+        // Desativada em mobile para não exibir a linha de caracteres estranhos no topo da tela
+        if (window.matchMedia("(min-width: 701px)").matches) {
+            const logoParts = [".logo-scramble", ".logo-scramble-accent"];
+            const logoOriginal = { ".logo-scramble": "JO", ".logo-scramble-accent": "_ENG" };
+            logoParts.forEach((sel) => {
+                const tl = gsap.timeline({ repeat: -1, repeatDelay: 10 });
+                tl.to(sel, {
+                    scrambleText: { text: "§¶•†‡ÆØÅ", speed: 0.5 },
+                    duration: 1
+                })
+                .to(sel, {
+                    scrambleText: { text: logoOriginal[sel], speed: 0.3 },
+                    duration: 1,
+                    delay: 0.8
+                });
+            });
+        }
+    </script>
+
+    <script>
+        // Renderiza os cards de projeto a partir da mesma fonte de dados do slider da home
+        (function () {
+            const grid = document.getElementById('projectsGrid');
+
+            function cardHTML(p) {
+                return `
+                    <article class="project-card">
+                        <img src="${p.image}" alt="${p.imageAlt || p.title}" loading="lazy">
+                        <div class="project-card-content">
+                            <h3 class="project-card-title">${p.title}</h3>
+                            <p class="project-card-desc">${p.description}</p>
+                            <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="btn-view-project">Acessar Site</a>
+                        </div>
+                    </article>
+                `;
+            }
+
+            fetch('projects.json')
+                .then((res) => res.json())
+                .then((projects) => {
+                    grid.innerHTML = projects.length
+                        ? projects.map(cardHTML).join('')
+                        : '<p class="empty-state">Novos projetos em breve.</p>';
+                })
+                .catch((err) => {
+                    console.error('Não foi possível carregar os projetos:', err);
+                    grid.innerHTML = '<p class="empty-state">Não foi possível carregar os projetos no momento.</p>';
+                });
+        })();
+    </script>
+
+</body>
+</html>

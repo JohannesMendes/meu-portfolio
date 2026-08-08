@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin — Depoimentos</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
@@ -17,6 +17,7 @@
         --border-color: #eeeeee;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { overflow-x: hidden; width: 100%; }
     body {
         background: var(--bg-main);
         color: var(--text-dark);
@@ -24,8 +25,11 @@
         min-height: 100vh;
         padding: 60px 6% 100px;
         max-width: 900px;
+        overflow-x: hidden;
+        width: 100%;
         margin: 0 auto;
     }
+    img, svg, canvas { max-width: 100%; height: auto; }
     a.back-link {
         color: var(--text-muted);
         text-decoration: none;

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Johannes Mendes | Software Engineer</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-HoJvPq1J6tl0TRX/w4Z8oO9RvFkkfLEeRNEO5cWLZ4DVS1zMb+fiaxKc0d9SAjA3e2hl0aU4j4uHNhWz4+X4ig==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -25,12 +25,23 @@
             scroll-behavior: smooth;
         }
 
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         body {
             background-color: var(--bg-main);
             color: var(--text-dark);
             font-family: 'Space Grotesk', sans-serif;
             overflow-x: hidden;
+            width: 100%;
             line-height: 1.4;
+        }
+
+        img, svg, canvas {
+            max-width: 100%;
+            height: auto;
         }
 
         /* Menu de Navegação Superior */
