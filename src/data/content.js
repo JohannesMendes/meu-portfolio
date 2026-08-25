@@ -58,7 +58,7 @@ export const PROJECTS = [
     title: "WordMaster",
     description:
       "Caça-palavras interativo com temas variados, sistema de pontuação e geração dinâmica de novos jogos.",
-    image: "/projects/wordmaster.svg",
+    image: "/projects/wordmaster.png",
     imageAlt: "Preview do site WordMaster — Caça-Palavras Gourmet",
     link: "https://wordmaster2.netlify.app/",
     tags: ["React", "Jogo", "UI/UX Design"],
@@ -68,7 +68,7 @@ export const PROJECTS = [
     title: "BetScore",
     description:
       "Plataforma com fluxo de login e cadastro, focada em autenticação de usuários e experiência de acesso fluida.",
-    image: "/projects/betscore.svg",
+    image: "/projects/betscore.png",
     imageAlt: "Preview do site BetScore — Entrar ou Cadastrar",
     link: "https://creative-jalebi-b4069f.netlify.app/",
     tags: ["React", "Autenticação", "SaaS"],
