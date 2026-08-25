@@ -53,6 +53,36 @@ export const PROJECTS = [
     link: "https://effulgent-marzipan-9adc10.netlify.app/",
     tags: ["React", "Landing Page", "E-commerce"],
   },
+  {
+    id: "word-master",
+    title: "WordMaster",
+    description:
+      "Caça-palavras interativo com temas variados, sistema de pontuação e geração dinâmica de novos jogos.",
+    image: "/projects/wordmaster.svg",
+    imageAlt: "Preview do site WordMaster — Caça-Palavras Gourmet",
+    link: "https://wordmaster2.netlify.app/",
+    tags: ["React", "Jogo", "UI/UX Design"],
+  },
+  {
+    id: "bet-score",
+    title: "BetScore",
+    description:
+      "Plataforma com fluxo de login e cadastro, focada em autenticação de usuários e experiência de acesso fluida.",
+    image: "/projects/betscore.svg",
+    imageAlt: "Preview do site BetScore — Entrar ou Cadastrar",
+    link: "https://creative-jalebi-b4069f.netlify.app/",
+    tags: ["React", "Autenticação", "SaaS"],
+  },
+  {
+    id: "treino-fit",
+    title: "Treino Fit",
+    description:
+      "Aplicação de fitness com jornada de treino personalizada e fluxo de cadastro para acompanhamento do usuário.",
+    image: "/projects/treinofit.svg",
+    imageAlt: "Preview do site TreinoFit — Sua Jornada",
+    link: "https://thunderous-kleicha-399c9d.netlify.app/register",
+    tags: ["React", "Fitness", "Landing Page"],
+  },
 ];
 
 export const MILESTONES = [
