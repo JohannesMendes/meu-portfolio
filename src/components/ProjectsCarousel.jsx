@@ -52,37 +52,40 @@ export default function ProjectsCarousel({ projects }) {
     el.scrollBy({ left: dir * amount, behavior: "smooth" });
   };
 
+  // Only mouse (not touch) uses this manual drag path — touch already gets
+  // native swipe/scroll-snap for free, and mixing pointer capture with
+  // anchor children on touch is what was swallowing the "Acessar Site" click.
   const onPointerDown = (e) => {
-    if (!multiple) return;
+    if (!multiple || e.pointerType !== "mouse") return;
     const el = trackRef.current;
     if (!el) return;
     isDragging.current = true;
     draggedRef.current = false;
     dragStartX.current = e.clientX;
     dragStartScroll.current = el.scrollLeft;
-    el.setPointerCapture(e.pointerId);
+
+    const onMove = (ev) => {
+      if (!isDragging.current) return;
+      const delta = ev.clientX - dragStartX.current;
+      if (Math.abs(delta) > 4) draggedRef.current = true;
+      el.scrollLeft = dragStartScroll.current - delta;
+    };
+    const onUp = () => {
+      isDragging.current = false;
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
   };
 
-  const onPointerMove = (e) => {
-    if (!isDragging.current) return;
-    const el = trackRef.current;
-    if (!el) return;
-    const delta = e.clientX - dragStartX.current;
-    if (Math.abs(delta) > 4) draggedRef.current = true;
-    el.scrollLeft = dragStartScroll.current - delta;
-  };
-
-  const endDrag = () => {
-    isDragging.current = false;
-  };
-
-  // Prevent the click-through on a card immediately after a drag gesture.
+  // Prevent the click-through on a card immediately after an actual drag gesture.
   const onClickCapture = (e) => {
     if (draggedRef.current) {
       e.preventDefault();
       e.stopPropagation();
-      draggedRef.current = false;
     }
+    draggedRef.current = false;
   };
 
   return (
@@ -90,9 +93,6 @@ export default function ProjectsCarousel({ projects }) {
       <div
         ref={trackRef}
         onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerLeave={endDrag}
         onClickCapture={onClickCapture}
         className={`flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
           multiple ? "cursor-grab active:cursor-grabbing" : ""

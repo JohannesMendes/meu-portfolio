@@ -73,20 +73,10 @@ export const PROJECTS = [
     link: "https://creative-jalebi-b4069f.netlify.app/",
     tags: ["React", "Autenticação", "SaaS"],
   },
-  {
-    id: "treino-fit",
-    title: "Treino Fit",
-    description:
-      "Aplicação de fitness com jornada de treino personalizada e fluxo de cadastro para acompanhamento do usuário.",
-    image: "/projects/treinofit.svg",
-    imageAlt: "Preview do site TreinoFit — Sua Jornada",
-    link: "https://thunderous-kleicha-399c9d.netlify.app/register",
-    tags: ["React", "Fitness", "Landing Page"],
-  },
 ];
 
 export const MILESTONES = [
-  { number: "1", label: "Projeto em destaque" },
+  { number: String(PROJECTS.length), label: "Projetos em destaque" },
   { number: "Full-Stack", label: "Frontend + Backend + Mobile + Desktop" },
   { number: "Sob Medida", label: "Foco em performance & UX" },
   { number: "Desde 2025", label: "Em atividade contínua" },
