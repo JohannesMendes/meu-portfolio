@@ -134,7 +134,7 @@ export default function Hero() {
       ref={wrapperRef}
       id="top"
       className="relative w-full"
-      style={{ height: isMobile ? "150dvh" : "160dvh" }}
+      style={{ height: isMobile ? "115dvh" : "125dvh" }}
     >
       <section className="sticky top-0 flex h-[100dvh] w-full flex-col justify-center overflow-hidden px-6 pt-28 pb-16 sm:px-8 sm:pt-32 lg:px-16 lg:pt-28">
         {/* z-0: video card, exclusive owner of the scroll-expansion animation */}
@@ -183,11 +183,7 @@ export default function Hero() {
           className="relative z-20 mx-auto flex w-full max-w-4xl flex-col"
           style={{ opacity: contentOpacity, y: -contentShift }}
         >
-          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 font-mono text-[0.65rem] uppercase tracking-widest text-paper backdrop-blur-sm sm:text-xs">
-            Engenharia de Software &amp; Design Inteligente
-          </span>
-
-          <h1 className="mt-6 font-display text-[clamp(2.1rem,6.2vw,4rem)] font-bold leading-[1.08] tracking-tight text-paper text-balance">
+          <h1 className="font-display text-[clamp(2.1rem,6.2vw,4rem)] font-bold leading-[1.08] tracking-tight text-paper text-balance">
             Experiências digitais
             <br />
             em movimento fluido<span className="text-signal">.</span>

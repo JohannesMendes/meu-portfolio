@@ -42,6 +42,11 @@ export const SERVICES = [
   },
 ];
 
+export const PROJECT_CATEGORIES = [
+  { id: "sites", label: "Sites" },
+  { id: "apps", label: "Aplicativos" },
+];
+
 export const PROJECTS = [
   {
     id: "volta-motos",
@@ -52,6 +57,7 @@ export const PROJECTS = [
     imageAlt: "Preview do site Volta — Motos elétricas de alta performance",
     link: "https://effulgent-marzipan-9adc10.netlify.app/",
     tags: ["React", "Landing Page", "E-commerce"],
+    category: "sites",
   },
   {
     id: "word-master",
@@ -62,6 +68,7 @@ export const PROJECTS = [
     imageAlt: "Preview do site WordMaster — Caça-Palavras Gourmet",
     link: "https://wordmaster2.netlify.app/",
     tags: ["React", "Jogo", "UI/UX Design"],
+    category: "sites",
   },
   {
     id: "bet-score",
@@ -72,6 +79,7 @@ export const PROJECTS = [
     imageAlt: "Preview do site BetScore — Entrar ou Cadastrar",
     link: "https://creative-jalebi-b4069f.netlify.app/",
     tags: ["React", "Autenticação", "SaaS"],
+    category: "sites",
   },
 ];
 
