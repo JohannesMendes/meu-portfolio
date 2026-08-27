@@ -134,7 +134,7 @@ export default function Hero() {
       ref={wrapperRef}
       id="top"
       className="relative w-full"
-      style={{ height: isMobile ? "220dvh" : "230dvh" }}
+      style={{ height: isMobile ? "150dvh" : "160dvh" }}
     >
       <section className="sticky top-0 flex h-[100dvh] w-full flex-col justify-center overflow-hidden px-6 pt-28 pb-16 sm:px-8 sm:pt-32 lg:px-16 lg:pt-28">
         {/* z-0: video card, exclusive owner of the scroll-expansion animation */}
@@ -180,67 +180,41 @@ export default function Hero() {
 
         {/* z-20: hero copy */}
         <motion.div
-          className="relative z-20 mx-auto flex w-full max-w-7xl flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-10"
+          className="relative z-20 mx-auto flex w-full max-w-4xl flex-col"
           style={{ opacity: contentOpacity, y: -contentShift }}
         >
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 font-mono text-xs uppercase tracking-widest text-paper backdrop-blur-sm sm:text-sm">
-              Engenharia de Software &amp; Design Inteligente
-            </span>
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 font-mono text-[0.65rem] uppercase tracking-widest text-paper backdrop-blur-sm sm:text-xs">
+            Engenharia de Software &amp; Design Inteligente
+          </span>
 
-            <h1 className="mt-6 font-display text-[clamp(2.4rem,8vw,5.25rem)] font-bold leading-[1.05] tracking-tight text-paper text-balance">
-              Experiências digitais
-              <br />
-              em movimento fluido<span className="text-signal">.</span>
-            </h1>
+          <h1 className="mt-6 font-display text-[clamp(2.1rem,6.2vw,4rem)] font-bold leading-[1.08] tracking-tight text-paper text-balance">
+            Experiências digitais
+            <br />
+            em movimento fluido<span className="text-signal">.</span>
+          </h1>
 
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-white/80 sm:text-lg">
-              Transformando espaços digitais com arquiteturas full-stack robustas e
-              experiências visuais em tempo real que geram engajamento e performance
-              estável.
-            </p>
+          <p className="mt-5 max-w-lg text-[clamp(0.95rem,1.6vw,1.125rem)] leading-relaxed text-white/80">
+            Transformando espaços digitais com arquiteturas full-stack robustas e
+            experiências visuais em tempo real que geram engajamento e performance
+            estável.
+          </p>
 
-            <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-9 sm:gap-4">
-              <a
-                href="#projetos"
-                onClick={(e) => smoothScrollTo(e, "#projetos")}
-                className="inline-flex items-center justify-center rounded-full bg-paper px-7 py-3.5 text-sm font-semibold text-ink transition-transform hover:-translate-y-0.5 sm:text-base"
-              >
-                Ver Portfólio
-              </a>
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/5 px-7 py-3.5 text-sm font-medium text-paper backdrop-blur-sm transition-colors hover:border-white/60 hover:bg-white/15 sm:text-base"
-              >
-                Iniciar Parceria
-              </a>
-            </div>
-          </div>
-
-          {/* Signature element: terminal card */}
-          <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-ink/60 font-mono text-xs shadow-2xl backdrop-blur-md sm:text-sm">
-            <div className="flex items-center gap-1.5 border-b border-white/10 px-5 py-3 sm:px-4">
-              <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
-              <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
-              <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
-              <span className="ml-2 text-white/40">whoami.sh</span>
-            </div>
-            <div className="space-y-1.5 px-5 py-4 text-white/70 sm:px-4">
-              <p className="break-words">
-                <span className="text-signal">$</span> whoami
-              </p>
-              <p className="break-words text-white/90">Johannes Mendes — Software Engineer</p>
-              <p className="mt-3 break-words">
-                <span className="text-signal">$</span> stack --core
-              </p>
-              <p className="break-words text-white/90">React · Python · FastAPI · Flutter</p>
-              <p className="mt-3 break-words">
-                <span className="text-signal">$</span> status
-                <span className="caret">&nbsp;</span>
-              </p>
-            </div>
+          <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-9 sm:gap-4">
+            <a
+              href="#projetos"
+              onClick={(e) => smoothScrollTo(e, "#projetos")}
+              className="inline-flex items-center justify-center rounded-full bg-paper px-7 py-3.5 text-sm font-semibold text-ink transition-transform hover:-translate-y-0.5 sm:text-base"
+            >
+              Ver Portfólio
+            </a>
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/5 px-7 py-3.5 text-sm font-medium text-paper backdrop-blur-sm transition-colors hover:border-white/60 hover:bg-white/15 sm:text-base"
+            >
+              Iniciar Parceria
+            </a>
           </div>
         </motion.div>
 
