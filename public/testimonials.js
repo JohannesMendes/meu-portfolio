@@ -44,13 +44,17 @@ function saveTestimonials(list) {
     localStorage.setItem(TESTIMONIALS_STORAGE_KEY, JSON.stringify(list));
 }
 
-function addTestimonial({ quote, author, role }) {
+function addTestimonial({ quote, author, role, rating }) {
     const list = getTestimonials();
+    const safeRating = Number.isFinite(Number(rating))
+        ? Math.min(5, Math.max(1, Math.round(Number(rating))))
+        : 5;
     list.push({
         id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
         quote: quote.trim(),
         author: author.trim(),
-        role: (role || "").trim()
+        role: (role || "").trim(),
+        rating: safeRating
     });
     saveTestimonials(list);
     return list;

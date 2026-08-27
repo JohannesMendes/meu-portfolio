@@ -123,5 +123,6 @@ export const DEFAULT_TESTIMONIALS = [
       "Cara, o produto superou demais as minhas expectativas! A entrega foi rápida, a interface é extremamente fluida e me ajudou a otimizar o fluxo de trabalho aqui na agência. Recomendo de olhos fechados para quem busca qualidade profissional.",
     author: "Lucas Silveira",
     role: "",
+    rating: 5,
   },
 ];

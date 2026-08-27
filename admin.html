@@ -76,7 +76,7 @@
         color: var(--text-muted);
         margin-bottom: 6px;
     }
-    input, textarea {
+    input, textarea, select {
         width: 100%;
         font-family: 'Space Grotesk', sans-serif;
         font-size: 0.95rem;
@@ -162,7 +162,7 @@
         <p class="subtitle">Área não listada no menu — cadastre, edite e remova os depoimentos exibidos na seção "Depoimentos" do site.</p>
 
         <div class="warning">
-            <strong>Importante:</strong> este painel salva os depoimentos apenas no <strong>localStorage deste navegador</strong> — é só um rascunho para você organizar o texto antes de publicar. Para o depoimento aparecer no site para <strong>todo mundo</strong>, clique em "Exportar JSON" abaixo, copie o resultado e me envie (ou cole na constante <code>DEFAULT_TESTIMONIALS</code> do arquivo <code>src/data/content.js</code> do projeto React, se for publicar você mesmo).
+            <strong>Importante:</strong> este painel salva os depoimentos apenas no <strong>localStorage deste navegador</strong> — é só um rascunho para você organizar o texto antes de publicar. Para o depoimento aparecer no site para <strong>todo mundo</strong>, clique em "Copiar código para o site" abaixo e cole no lugar da constante <code>DEFAULT_TESTIMONIALS</code> dentro do arquivo <code>src/data/content.js</code> do projeto.
         </div>
 
         <div class="panel">
@@ -177,6 +177,15 @@
                 <label for="role">Cargo / Empresa (opcional)</label>
                 <input id="role" placeholder="Ex: CEO da Empresa X">
 
+                <label for="rating">Avaliação (1 a 5 estrelas)</label>
+                <select id="rating">
+                    <option value="5" selected>★★★★★ (5)</option>
+                    <option value="4">★★★★☆ (4)</option>
+                    <option value="3">★★★☆☆ (3)</option>
+                    <option value="2">★★☆☆☆ (2)</option>
+                    <option value="1">★☆☆☆☆ (1)</option>
+                </select>
+
                 <button type="submit" class="btn btn-primary">Adicionar depoimento</button>
             </form>
         </div>
@@ -187,8 +196,9 @@
             <p class="empty" id="listEmpty">Nenhum depoimento cadastrado ainda.</p>
 
             <div class="actions-row">
-                <button type="button" class="btn btn-ghost" id="exportBtn">Exportar JSON</button>
+                <button type="button" class="btn btn-ghost" id="exportBtn">Copiar código para o site</button>
             </div>
+            <p class="empty" id="exportHint" style="display:none;">Código copiado! Cole no lugar de <code>DEFAULT_TESTIMONIALS</code> em <code>src/data/content.js</code>.</p>
             <textarea id="exportOutput" readonly></textarea>
         </div>
 
@@ -268,15 +278,20 @@
                 return;
             }
             listEmpty.style.display = 'none';
-            listEl.innerHTML = items.map((t) => `
+            listEl.innerHTML = items.map((t) => {
+                const rating = Number.isFinite(t.rating) ? t.rating : 5;
+                const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                return `
                 <div class="list-item">
                     <div>
                         <p>"${escapeHTML(t.quote)}"</p>
                         <div class="author">${escapeHTML(t.author)} ${t.role ? `<span class="role">— ${escapeHTML(t.role)}</span>` : ''}</div>
+                        <div class="role" style="margin-top:4px;color:#e6a800;">${stars}</div>
                     </div>
                     <button type="button" class="btn btn-danger" data-id="${t.id}">Remover</button>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         form.addEventListener('submit', (e) => {
@@ -284,8 +299,9 @@
             const quote = document.getElementById('quote').value.trim();
             const author = document.getElementById('author').value.trim();
             const role = document.getElementById('role').value.trim();
+            const rating = Number(document.getElementById('rating').value) || 5;
             if (!quote || !author) return;
-            addTestimonial({ quote, author, role });
+            addTestimonial({ quote, author, role, rating });
             form.reset();
             renderList();
         });
@@ -297,11 +313,37 @@
             renderList();
         });
 
-        exportBtn.addEventListener('click', () => {
+        function buildTestimonialsCode(items) {
+            const entries = items.map((t) => {
+                const rating = Number.isFinite(t.rating) ? t.rating : 5;
+                return [
+                    '  {',
+                    `    id: "${t.id}",`,
+                    `    quote:`,
+                    `      "${t.quote.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",`,
+                    `    author: "${t.author.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",`,
+                    `    role: "${(t.role || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",`,
+                    `    rating: ${rating},`,
+                    '  },',
+                ].join('\n');
+            });
+            return `export const DEFAULT_TESTIMONIALS = [\n${entries.join('\n')}\n];`;
+        }
+
+        exportBtn.addEventListener('click', async () => {
             const items = getTestimonials();
-            exportOutput.value = JSON.stringify(items, null, 4);
+            const code = buildTestimonialsCode(items);
+            exportOutput.value = code;
             exportOutput.style.display = 'block';
             exportOutput.select();
+
+            try {
+                await navigator.clipboard.writeText(code);
+                document.getElementById('exportHint').style.display = 'block';
+            } catch {
+                // Clipboard permission denied — the text is still selected
+                // in the textarea above, so the user can copy manually.
+            }
         });
     </script>
 </body>

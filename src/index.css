@@ -66,6 +66,14 @@ img, svg, video, canvas {
   to { transform: translateX(-50%); }
 }
 
+.testimonials-marquee-track {
+  animation: testimonials-marquee 38s linear infinite;
+}
+@keyframes testimonials-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -90,6 +98,7 @@ img, svg, video, canvas {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .marquee-track { animation: none; }
+  .testimonials-marquee-track { animation: none; }
   .reveal { transition: none; opacity: 1; transform: none; }
   .caret { animation: none; }
 }
