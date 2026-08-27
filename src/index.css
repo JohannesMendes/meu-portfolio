@@ -19,7 +19,15 @@
 html {
   overflow-x: hidden;
   width: 100%;
-  scroll-behavior: smooth;
+  /* Intentionally NOT scroll-behavior: smooth here. The Hero section
+     drives its own scroll-linked animation (video card expansion) off
+     the browser's native scroll position; CSS smooth-scrolling
+     interpolates every scroll input on top of that, which is what
+     caused the "stutters / has to scroll up then down again" feeling
+     on mobile. In-page anchor links get their smooth scroll from JS
+     (see the click handler in Home.jsx) instead, so navigation still
+     feels smooth without fighting the pinned Hero. */
+  scroll-behavior: auto;
 }
 
 body {
