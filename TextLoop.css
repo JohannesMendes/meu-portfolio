@@ -2,6 +2,9 @@
   position: relative;
   width: 100%;
   overflow: visible;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .text-loop-svg {

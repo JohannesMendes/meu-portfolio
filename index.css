@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --color-ink: #0a0a0a;
+  --color-panel: #121212;
+  --color-panel-soft: #161616;
+  --color-paper: #f6f5f2;
+  --color-signal: #ff3b30;
+  --color-signal-dim: #7a1a15;
+  --color-mist: #a3a3a3;
+  --color-hair: rgba(255, 255, 255, 0.09);
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+  /* Intentionally NOT scroll-behavior: smooth here. The Hero section
+     drives its own scroll-linked animation (video card expansion) off
+     the browser's native scroll position; CSS smooth-scrolling
+     interpolates every scroll input on top of that, which is what
+     caused the "stutters / has to scroll up then down again" feeling
+     on mobile. In-page anchor links get their smooth scroll from JS
+     (see the click handler in Home.jsx) instead, so navigation still
+     feels smooth without fighting the pinned Hero. */
+  scroll-behavior: auto;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+::selection {
+  background: var(--color-signal);
+  color: #0a0a0a;
+}
+
+.grid-texture {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+@keyframes marquee {
+  from { transform: translateX(0) translateZ(0); }
+  to { transform: translateX(-50%) translateZ(0); }
+}
+
+.testimonials-marquee-track {
+  animation: testimonials-marquee 38s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+@keyframes testimonials-marquee {
+  from { transform: translateX(0) translateZ(0); }
+  to { transform: translateX(-50%) translateZ(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px) translateZ(0);
+  transition: opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) translateZ(0);
+  will-change: auto;
+}
+
+.caret {
+  display: inline-block;
+  width: 0.55ch;
+  background: var(--color-signal);
+  margin-left: 2px;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .marquee-track { animation: none; }
+  .testimonials-marquee-track { animation: none; }
+  .reveal { transition: none; opacity: 1; transform: none; }
+  .caret { animation: none; }
+}
+
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
