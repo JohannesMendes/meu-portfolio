@@ -5,12 +5,13 @@ export default function Services() {
   return (
     <section id="servicos" className="relative overflow-hidden px-5 py-24 sm:px-8 sm:py-32 lg:px-16">
       {/* Decorative animated strokes — text flowing along a gently curved
-          path (never straight), echoing the hand-drawn reference. Kept
-          fully inside the section's own top padding so they never bleed
-          into the tech marquee above. Hidden on mobile. */}
+          path (never straight), echoing the hand-drawn reference. Mirrored
+          left/right so both show the same visible hump, kept inside the
+          section's own top padding so they never bleed into the tech
+          marquee above. Hidden on mobile. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-[-8%] top-2 hidden h-[130px] w-[440px] -rotate-[28deg] opacity-90 sm:block"
+        className="pointer-events-none absolute left-[-8%] top-6 hidden h-[130px] w-[480px] -rotate-[24deg] opacity-90 sm:block"
       >
         <TextLoop
           text="Jo_Eng"
@@ -77,43 +78,25 @@ export default function Services() {
           ))}
         </div>
 
-        {/* Two short curved ticks sitting in the gap BELOW the grid (never
-            over the card text), matching the small marks in the reference
-            sketch, curved instead of straight. */}
+        {/* One single continuous curve dipping below the grid and rising
+            back up, matching the hand-drawn reference — a smooth "U" with
+            a small upward hook at the end, instead of two disjoint marks. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative mt-3 hidden h-[64px] sm:block"
+          className="pointer-events-none relative mx-auto mt-4 hidden h-[150px] w-[70%] sm:block"
         >
-          <div className="absolute left-[26%] h-[64px] w-[150px] rotate-[58deg] opacity-90">
-            <TextLoop
-              text="✦"
-              shape="wave"
-              curviness={22}
-              separator=""
-              speed={40}
-              fontSize={16}
-              color="#ffffff"
-              ribbon
-              ribbonColor="var(--color-signal)"
-              ribbonWidth={22}
-              pauseOnHover={false}
-            />
-          </div>
-          <div className="absolute left-[58%] h-[64px] w-[150px] rotate-[58deg] opacity-90">
-            <TextLoop
-              text="✦"
-              shape="wave"
-              curviness={22}
-              separator=""
-              speed={40}
-              fontSize={16}
-              color="#ffffff"
-              ribbon
-              ribbonColor="var(--color-signal)"
-              ribbonWidth={22}
-              pauseOnHover={false}
-            />
-          </div>
+          <TextLoop
+            text="✦"
+            path="M 30 70 C 260 430 560 430 830 160 C 910 80 970 60 1030 150"
+            separator=""
+            speed={55}
+            fontSize={16}
+            color="#ffffff"
+            ribbon
+            ribbonColor="var(--color-signal)"
+            ribbonWidth={20}
+            pauseOnHover={false}
+          />
         </div>
       </div>
     </section>
