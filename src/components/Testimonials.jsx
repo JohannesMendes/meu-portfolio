@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { db, firebaseReady } from "../lib/firebase";
 import { DEFAULT_TESTIMONIALS, TESTIMONIALS_STORAGE_KEY } from "../data/content";
 
 function initials(name) {
@@ -19,9 +22,17 @@ function TestimonialCard({ testimonial }) {
   return (
     <blockquote className="mx-3 flex h-full w-[320px] shrink-0 flex-col rounded-2xl border border-hair bg-panel p-7 sm:w-[360px]">
       <div className="mb-4 flex items-center gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-sm font-bold text-paper">
-          {initials(testimonial.author)}
-        </span>
+        {testimonial.photo ? (
+          <img
+            src={testimonial.photo}
+            alt={testimonial.author}
+            className="h-10 w-10 shrink-0 rounded-full object-cover"
+          />
+        ) : (
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-sm font-bold text-paper">
+            {initials(testimonial.author)}
+          </span>
+        )}
         <div className="min-w-0">
           <p className="truncate font-medium text-paper">{testimonial.author}</p>
           {testimonial.role ? (
@@ -49,18 +60,38 @@ function TestimonialCard({ testimonial }) {
 
 export default function Testimonials() {
   // Starts with the static defaults so they render immediately for
-  // every visitor, on every browser/device — no localStorage needed.
+  // every visitor, on every browser/device — no network round trip
+  // needed for these.
   const [testimonials, setTestimonials] = useState(DEFAULT_TESTIMONIALS);
 
   useEffect(() => {
+    // Firebase configured: subscribe to the shared "testimonials"
+    // collection in Firestore. Every visitor who submits one via
+    // /enviar-depoimento shows up here live, for every other visitor —
+    // no admin approval step, no per-browser storage.
+    if (firebaseReady && db) {
+      const q = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const live = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          setTestimonials([...DEFAULT_TESTIMONIALS, ...live]);
+        },
+        () => {
+          // On any read error, keep showing the static defaults.
+          setTestimonials(DEFAULT_TESTIMONIALS);
+        }
+      );
+      return unsubscribe;
+    }
+
+    // Firebase not configured yet: fall back to the old behavior, where
+    // /admin.html writes to this browser's localStorage only.
     try {
       const raw = localStorage.getItem(TESTIMONIALS_STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : [];
       if (!Array.isArray(parsed) || parsed.length === 0) return;
 
-      // Merge: keep defaults, add any locally-saved ones (from a visit
-      // to /admin.html on this same browser) that aren't already
-      // present by id, so nothing is duplicated or lost.
       const knownIds = new Set(DEFAULT_TESTIMONIALS.map((t) => t.id));
       const extra = parsed.filter((t) => t && t.id && !knownIds.has(t.id));
       if (extra.length > 0) {
@@ -88,6 +119,13 @@ export default function Testimonials() {
         >
           Depoimentos
         </h2>
+        <p data-reveal className="reveal mt-3 text-sm text-mist">
+          Já trabalhou comigo?{" "}
+          <Link to="/enviar-depoimento" className="text-paper underline underline-offset-4 hover:text-signal">
+            Deixe seu depoimento aqui
+          </Link>
+          .
+        </p>
       </div>
 
       {testimonials.length > 0 ? (

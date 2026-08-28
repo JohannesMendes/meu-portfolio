@@ -53,7 +53,7 @@
         border-radius: 6px;
         font-size: 0.85rem;
         line-height: 1.6;
-        margin-bottom: 40px;
+        margin-bottom: 24px;
     }
     .panel {
         background: var(--bg-card);
@@ -108,8 +108,7 @@
     .btn-ghost:hover { border-color: var(--brand-red); color: var(--brand-red); }
     .btn-danger { background: none; border: 1px solid #f0c2c2; color: var(--brand-red); padding: 6px 14px; font-size: 0.8rem; }
     .btn-danger:hover { background: var(--brand-red); color: #fff; }
-
-    .actions-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .list-item {
         border: 1px solid var(--border-color);
@@ -126,14 +125,6 @@
     .list-item .author { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.85rem; }
     .list-item .role { color: var(--text-muted); font-weight: 400; font-size: 0.8rem; }
     .empty { color: var(--text-muted); font-size: 0.9rem; padding: 10px 0; }
-
-    #exportOutput {
-        width: 100%;
-        min-height: 140px;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.8rem;
-        display: none;
-    }
 </style>
 </head>
 <body>
@@ -143,7 +134,7 @@
         <h1 style="font-size: 1.6rem;">Painel de Depoimentos</h1>
         <p class="subtitle">Acesso restrito. Digite a senha para continuar.</p>
         <div class="warning">
-            <strong>Nível de segurança:</strong> como o site é 100% estático (sem backend/servidor), esta senha é validada no próprio navegador. Ela afasta visitantes casuais, mas não é proteção real contra alguém que abra o código-fonte da página — para segurança de verdade seria necessário um login validado por um servidor.
+            <strong>Nível de segurança:</strong> como o site é estático, esta senha é validada no próprio navegador — afasta visitantes casuais, mas não é proteção real contra alguém que abra o código-fonte da página. Quem realmente impede que estranhos apaguem ou editem depoimentos são as <strong>regras do Firestore</strong> (ver aviso abaixo), não esta senha.
         </div>
         <form id="loginForm">
             <label for="password">Senha</label>
@@ -159,19 +150,24 @@
         <a href="index.html" class="back-link">&larr; Voltar ao site</a>
         <button type="button" id="logoutBtn" class="back-link" style="background:none;border:none;cursor:pointer;float:right;">Sair &rarr;</button>
         <h1>Painel de Depoimentos</h1>
-        <p class="subtitle">Área não listada no menu — cadastre, edite e remova os depoimentos exibidos na seção "Depoimentos" do site.</p>
+        <p class="subtitle">Área não listada no menu — os depoimentos aqui vêm do mesmo banco de dados (Firestore) que a página pública "Deixe seu depoimento" usa. Tudo o que aparece na lista abaixo já está visível para todo mundo no site.</p>
+
+        <div id="notConfiguredWarning" class="warning" style="display:none;">
+            <strong>Firebase não configurado.</strong> Preencha <code>FIREBASE_CONFIG</code> logo no início do script desta página (mesmos valores que você colocou em <code>src/data/content.js</code>) para o painel funcionar.
+        </div>
 
         <div class="warning">
-            <strong>Importante:</strong> este painel salva os depoimentos apenas no <strong>localStorage deste navegador</strong> — é só um rascunho para você organizar o texto antes de publicar. Para o depoimento aparecer no site para <strong>todo mundo</strong>, clique em "Copiar código para o site" abaixo e cole no lugar da constante <code>DEFAULT_TESTIMONIALS</code> dentro do arquivo <code>src/data/content.js</code> do projeto.
+            <strong>Sobre remover um depoimento:</strong> o botão "Remover" abaixo só funciona se as regras do Firestore permitirem exclusão (<code>allow delete: if true</code>). Se você seguiu a regra recomendada (mais segura, sem exclusão pública), o botão vai falhar — nesse caso, remova o depoimento indevido direto pelo <a href="https://console.firebase.google.com" target="_blank" rel="noopener">Firebase Console</a>, em Firestore Database → coleção "testimonials".
         </div>
 
         <div class="panel">
-            <h2>Novo depoimento</h2>
+            <h2>Adicionar depoimento manualmente</h2>
+            <p class="subtitle" style="margin-bottom:16px;">Use isso para cadastrar um depoimento que você recebeu por fora (WhatsApp, e-mail etc.) — ele entra direto no Firestore, igual ao formulário público.</p>
             <form id="testimonialForm">
-                <label for="quote">Texto do depoimento (o que a pessoa disse sobre você)</label>
+                <label for="quote">Texto do depoimento</label>
                 <textarea id="quote" required placeholder="Ex: O produto superou minhas expectativas..."></textarea>
 
-                <label for="author">Nome de quem escreveu o depoimento</label>
+                <label for="author">Nome de quem escreveu</label>
                 <input id="author" required placeholder="Ex: Maria Silva">
 
                 <label for="role">Cargo / Empresa (opcional)</label>
@@ -186,33 +182,55 @@
                     <option value="1">★☆☆☆☆ (1)</option>
                 </select>
 
-                <button type="submit" class="btn btn-primary">Adicionar depoimento</button>
+                <label for="photo">URL da foto (opcional)</label>
+                <input id="photo" placeholder="Cole a URL da foto, se tiver">
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">Adicionar depoimento</button>
             </form>
         </div>
 
         <div class="panel">
-            <h2>Depoimentos cadastrados neste navegador</h2>
+            <h2>Depoimentos publicados</h2>
             <div id="list"></div>
-            <p class="empty" id="listEmpty">Nenhum depoimento cadastrado ainda.</p>
-
-            <div class="actions-row">
-                <button type="button" class="btn btn-ghost" id="exportBtn">Copiar código para o site</button>
-            </div>
-            <p class="empty" id="exportHint" style="display:none;">Código copiado! Cole no lugar de <code>DEFAULT_TESTIMONIALS</code> em <code>src/data/content.js</code>.</p>
-            <textarea id="exportOutput" readonly></textarea>
+            <p class="empty" id="listEmpty" style="display:none;">Nenhum depoimento ainda.</p>
         </div>
 
     </div>
 
-    <script src="testimonials.js"></script>
+    <!-- Firebase (via CDN, modo compat para poder usar tags <script> simples) -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script>
+        /* ===================================================================
+           CONFIGURAÇÃO DO FIREBASE
+           Cole aqui os MESMOS valores que você colocou em FIREBASE_CONFIG
+           dentro de src/data/content.js.
+           =================================================================== */
+        const FIREBASE_CONFIG = {
+            apiKey: "",
+            authDomain: "",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: "",
+            appId: "",
+        };
+
+        const firebaseReady = Boolean(FIREBASE_CONFIG.apiKey);
+        let db = null;
+        if (firebaseReady) {
+            firebase.initializeApp(FIREBASE_CONFIG);
+            db = firebase.firestore();
+        } else {
+            document.getElementById('notConfiguredWarning').style.display = 'block';
+        }
+
         /* ===================================================================
            LOGIN — proteção client-side por senha (ver aviso de segurança acima).
            Para trocar a senha: gere um novo hash SHA-256 do texto desejado
            (ex: no console do navegador, rode:
            crypto.subtle.digest('SHA-256', new TextEncoder().encode('SUA_SENHA'))
            .then(b => console.log(Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,'0')).join('')))
-           ) e substitua o valor de ADMIN_PASSWORD_HASH abaixo.
+           ) e substitua o valor de REAL_PASSWORD_HASH abaixo.
            Senha padrão definida agora: "volta2026"
            =================================================================== */
         const ADMIN_SESSION_KEY = "jm_admin_authenticated";
@@ -222,7 +240,6 @@
             return Array.from(new Uint8Array(buffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
         }
 
-        // Hash SHA-256 da senha padrão "volta2026"
         const REAL_PASSWORD_HASH = "29d74406cdb619ea8f719d75d5f9c8ae5a81d038aa2096d5cc6e14da6b1ba8cb";
 
         const loginGate = document.getElementById('loginGate');
@@ -234,7 +251,7 @@
         function showAdmin() {
             loginGate.style.display = 'none';
             adminContent.style.display = 'block';
-            renderList();
+            if (firebaseReady) subscribeToList();
         }
 
         function showLogin() {
@@ -264,14 +281,18 @@
             showLogin();
         });
 
+        function escapeHTML(str) {
+            const div = document.createElement("div");
+            div.textContent = str || "";
+            return div.innerHTML;
+        }
+
         const form = document.getElementById('testimonialForm');
+        const submitBtn = document.getElementById('submitBtn');
         const listEl = document.getElementById('list');
         const listEmpty = document.getElementById('listEmpty');
-        const exportBtn = document.getElementById('exportBtn');
-        const exportOutput = document.getElementById('exportOutput');
 
-        function renderList() {
-            const items = getTestimonials();
+        function renderList(items) {
             if (items.length === 0) {
                 listEl.innerHTML = '';
                 listEmpty.style.display = 'block';
@@ -294,55 +315,58 @@
             }).join('');
         }
 
-        form.addEventListener('submit', (e) => {
+        function subscribeToList() {
+            db.collection('testimonials').orderBy('createdAt', 'desc').onSnapshot(
+                (snapshot) => {
+                    const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                    renderList(items);
+                },
+                (err) => {
+                    listEl.innerHTML = '';
+                    listEmpty.textContent = 'Não foi possível carregar os depoimentos (verifique as regras do Firestore).';
+                    listEmpty.style.display = 'block';
+                    console.error(err);
+                }
+            );
+        }
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (!firebaseReady) return;
+
             const quote = document.getElementById('quote').value.trim();
             const author = document.getElementById('author').value.trim();
             const role = document.getElementById('role').value.trim();
             const rating = Number(document.getElementById('rating').value) || 5;
+            const photo = document.getElementById('photo').value.trim();
             if (!quote || !author) return;
-            addTestimonial({ quote, author, role, rating });
-            form.reset();
-            renderList();
-        });
 
-        listEl.addEventListener('click', (e) => {
-            const btn = e.target.closest('button[data-id]');
-            if (!btn) return;
-            deleteTestimonial(btn.dataset.id);
-            renderList();
-        });
-
-        function buildTestimonialsCode(items) {
-            const entries = items.map((t) => {
-                const rating = Number.isFinite(t.rating) ? t.rating : 5;
-                return [
-                    '  {',
-                    `    id: "${t.id}",`,
-                    `    quote:`,
-                    `      "${t.quote.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",`,
-                    `    author: "${t.author.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",`,
-                    `    role: "${(t.role || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",`,
-                    `    rating: ${rating},`,
-                    '  },',
-                ].join('\n');
-            });
-            return `export const DEFAULT_TESTIMONIALS = [\n${entries.join('\n')}\n];`;
-        }
-
-        exportBtn.addEventListener('click', async () => {
-            const items = getTestimonials();
-            const code = buildTestimonialsCode(items);
-            exportOutput.value = code;
-            exportOutput.style.display = 'block';
-            exportOutput.select();
-
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Adicionando...';
             try {
-                await navigator.clipboard.writeText(code);
-                document.getElementById('exportHint').style.display = 'block';
-            } catch {
-                // Clipboard permission denied — the text is still selected
-                // in the textarea above, so the user can copy manually.
+                await db.collection('testimonials').add({
+                    quote, author, role, rating, photo,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+                form.reset();
+            } catch (err) {
+                alert('Não foi possível adicionar. Verifique as regras do Firestore (allow create: if true).');
+                console.error(err);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Adicionar depoimento';
+            }
+        });
+
+        listEl.addEventListener('click', async (e) => {
+            const btn = e.target.closest('button[data-id]');
+            if (!btn || !firebaseReady) return;
+            if (!confirm('Remover este depoimento? Essa ação não pode ser desfeita.')) return;
+            try {
+                await db.collection('testimonials').doc(btn.dataset.id).delete();
+            } catch (err) {
+                alert('Não foi possível remover por aqui — as regras do Firestore não permitem exclusão pública. Remova pelo Firebase Console em vez disso.');
+                console.error(err);
             }
         });
     </script>

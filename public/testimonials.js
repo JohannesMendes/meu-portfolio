@@ -44,7 +44,7 @@ function saveTestimonials(list) {
     localStorage.setItem(TESTIMONIALS_STORAGE_KEY, JSON.stringify(list));
 }
 
-function addTestimonial({ quote, author, role, rating }) {
+function addTestimonial({ quote, author, role, rating, photo }) {
     const list = getTestimonials();
     const safeRating = Number.isFinite(Number(rating))
         ? Math.min(5, Math.max(1, Math.round(Number(rating))))
@@ -54,7 +54,8 @@ function addTestimonial({ quote, author, role, rating }) {
         quote: quote.trim(),
         author: author.trim(),
         role: (role || "").trim(),
-        rating: safeRating
+        rating: safeRating,
+        photo: (photo || "").trim()
     });
     saveTestimonials(list);
     return list;

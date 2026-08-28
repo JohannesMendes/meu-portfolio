@@ -4,6 +4,54 @@ export const WHATSAPP_LINK =
 export const GITHUB_LINK = "https://github.com/JohannesMendes";
 export const INSTAGRAM_LINK = "https://www.instagram.com/jocore.digital/";
 
+// Endpoint do Formspree usado pelo formulário público de depoimentos
+// (/enviar-depoimento). Crie uma conta grátis em https://formspree.io,
+// crie um formulário e cole aqui a URL de "endpoint" (algo como
+// "https://formspree.io/f/xxxxxxxx"). Enquanto estiver vazio, a página
+// de envio mostra um aviso em vez do formulário.
+export const TESTIMONIAL_FORM_ENDPOINT = "";
+
+// Configuração do Firebase — usada pela página pública /enviar-depoimento
+// e pela seção de Depoimentos para salvar e ler os depoimentos direto de
+// um banco de dados compartilhado (Firestore), visível para qualquer
+// visitante, sem precisar de aprovação manual.
+//
+// Como configurar (grátis, ~5 minutos):
+// 1. Acesse https://console.firebase.google.com e crie um projeto.
+// 2. No menu lateral, vá em "Firestore Database" > "Criar banco de
+//    dados" (modo produção está ok).
+// 3. Em "Regras" do Firestore, cole:
+//      rules_version = '2';
+//      service cloud.firestore {
+//        match /databases/{database}/documents {
+//          match /testimonials/{id} {
+//            allow read: if true;
+//            allow create: if true;
+//            allow update, delete: if false;
+//          }
+//        }
+//      }
+//    Isso permite que qualquer visitante LEIA e ENVIE um novo
+//    depoimento, mas ninguém consegue apagar ou editar pelo site — para
+//    remover um depoimento indevido, use o painel do Firebase Console
+//    (Firestore Database > coleção "testimonials" > excluir o
+//    documento), que só você acessa com seu login do Google.
+// 4. (Opcional, para foto) Vá em "Storage" > "Começar" para habilitar
+//    o upload de fotos.
+// 5. Vá em "Configurações do projeto" (ícone de engrenagem) > role até
+//    "Seus apps" > clique no ícone "</>" para criar um app da Web >
+//    copie o objeto de configuração e cole os valores abaixo.
+export const FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+};
+
+export const FIREBASE_CONFIGURED = Boolean(FIREBASE_CONFIG.apiKey);
+
 export const NAV_LINKS = [
   { label: "Serviços", href: "/#servicos" },
   { label: "Sobre", href: "/#sobre" },
@@ -124,5 +172,6 @@ export const DEFAULT_TESTIMONIALS = [
     author: "Lucas Silveira",
     role: "",
     rating: 5,
+    photo: "",
   },
 ];
