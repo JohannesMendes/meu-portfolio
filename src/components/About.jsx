@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ABOUT_PARAGRAPHS, ABOUT_PHILOSOPHY, CORE_STACK } from "../data/content";
+import TextLoop from "./TextLoop";
 
 /**
  * About
@@ -16,6 +17,50 @@ export default function About() {
   return (
     <section id="sobre" className="relative overflow-hidden px-5 py-24 sm:px-8 sm:py-32 lg:px-16">
       <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-signal/10 blur-3xl" />
+
+      {/* Decorative animated strokes — mirrors the hand-drawn reference:
+          one curling over the heading/photo, one running down the right
+          side past the stack card. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-20 -top-6 hidden h-[130px] w-[520px] -rotate-[24deg] opacity-90 lg:block"
+      >
+        <TextLoop
+          text="Sobre Mim"
+          shape="wave"
+          curviness={40}
+          separator="✦"
+          speed={65}
+          fontSize={22}
+          fontWeight={800}
+          letterSpacing={2}
+          color="#ffffff"
+          ribbon
+          ribbonColor="var(--color-signal)"
+          ribbonWidth={34}
+          pauseOnHover={false}
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-52 top-16 hidden h-[110px] w-[520px] rotate-[82deg] opacity-90 lg:block"
+      >
+        <TextLoop
+          text="Core Stack"
+          shape="line"
+          separator="✦"
+          speed={60}
+          direction="reverse"
+          fontSize={20}
+          fontWeight={800}
+          letterSpacing={2}
+          color="#ffffff"
+          ribbon
+          ribbonColor="var(--color-signal)"
+          ribbonWidth={30}
+          pauseOnHover={false}
+        />
+      </div>
 
       <div className="relative mx-auto max-w-7xl">
         <h2
