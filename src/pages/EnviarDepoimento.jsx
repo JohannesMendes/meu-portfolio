@@ -14,7 +14,7 @@ export default function EnviarDepoimento() {
   const [rating, setRating] = useState(5);
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [unlocked, setUnlocked] = useState(
-    () => sessionStorage.getItem(ACCESS_SESSION_KEY) === "1"
+    () => localStorage.getItem(ACCESS_SESSION_KEY) === "1"
   );
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -26,7 +26,7 @@ export default function EnviarDepoimento() {
   function handleUnlock(e) {
     e.preventDefault();
     if (passwordInput === TESTIMONIAL_FORM_PASSWORD) {
-      sessionStorage.setItem(ACCESS_SESSION_KEY, "1");
+      localStorage.setItem(ACCESS_SESSION_KEY, "1");
       setUnlocked(true);
       setPasswordError(false);
     } else {

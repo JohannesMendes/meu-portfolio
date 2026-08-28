@@ -42,12 +42,12 @@ export const TESTIMONIAL_FORM_ENDPOINT = "";
 //    "Seus apps" > clique no ícone "</>" para criar um app da Web >
 //    copie o objeto de configuração e cole os valores abaixo.
 export const FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
+  apiKey: "AIzaSyA5JMbCrlzxJIQwINY_dxUufz6hNWHToLg",
+  authDomain: "jo-eng-portfolio.firebaseapp.com",
+  projectId: "jo-eng-portfolio",
+  storageBucket: "jo-eng-portfolio.firebasestorage.app",
+  messagingSenderId: "474135260680",
+  appId: "1:474135260680:web:9341af496ea961e336abbd",
 };
 
 export const FIREBASE_CONFIGURED = Boolean(FIREBASE_CONFIG.apiKey);
