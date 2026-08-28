@@ -1,19 +1,38 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, Star } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Lock, Star } from "lucide-react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { db, firebaseReady, storage } from "../lib/firebase";
+import { TESTIMONIAL_FORM_PASSWORD } from "../data/content";
+
+const ACCESS_SESSION_KEY = "jm_testimonial_form_unlocked";
 
 export default function EnviarDepoimento() {
   const [rating, setRating] = useState(5);
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [unlocked, setUnlocked] = useState(
+    () => sessionStorage.getItem(ACCESS_SESSION_KEY) === "1"
+  );
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  function handleUnlock(e) {
+    e.preventDefault();
+    if (passwordInput === TESTIMONIAL_FORM_PASSWORD) {
+      sessionStorage.setItem(ACCESS_SESSION_KEY, "1");
+      setUnlocked(true);
+      setPasswordError(false);
+    } else {
+      setPasswordError(true);
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -75,7 +94,40 @@ export default function EnviarDepoimento() {
             no site assim que você enviar.
           </p>
 
-          {!firebaseReady ? (
+          {!unlocked ? (
+            <form
+              onSubmit={handleUnlock}
+              className="mt-10 flex flex-col gap-4 rounded-2xl border border-hair bg-panel p-6 sm:p-8"
+            >
+              <div className="flex items-center gap-2 text-mist">
+                <Lock size={18} />
+                <span className="text-sm">Página protegida por senha</span>
+              </div>
+              <p className="text-sm text-mist">
+                Peça a senha para o Johannes antes de continuar.
+              </p>
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => {
+                  setPasswordInput(e.target.value);
+                  setPasswordError(false);
+                }}
+                autoFocus
+                placeholder="Digite a senha"
+                className="w-full rounded-lg border border-hair bg-ink px-4 py-3 text-paper outline-none focus:border-white/30"
+              />
+              {passwordError ? (
+                <p className="text-sm text-signal">Senha incorreta. Tenta de novo.</p>
+              ) : null}
+              <button
+                type="submit"
+                className="mt-1 inline-flex items-center justify-center rounded-full bg-paper px-7 py-3.5 text-sm font-semibold text-ink transition-transform hover:-translate-y-0.5 sm:text-base"
+              >
+                Entrar
+              </button>
+            </form>
+          ) : !firebaseReady ? (
             <div className="mt-10 rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-6 text-sm leading-relaxed text-mist">
               Formulário ainda não configurado. Preencha{" "}
               <code className="text-paper">FIREBASE_CONFIG</code> em{" "}

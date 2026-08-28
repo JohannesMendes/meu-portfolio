@@ -52,6 +52,14 @@ export const FIREBASE_CONFIG = {
 
 export const FIREBASE_CONFIGURED = Boolean(FIREBASE_CONFIG.apiKey);
 
+// Senha que protege a página pública "/enviar-depoimento". Envie essa
+// senha só para os clientes de quem você quer receber um depoimento —
+// sem ela, a pessoa não consegue nem ver o formulário. Troque o valor
+// abaixo quando quiser usar outra senha (é uma trava simples, guardada
+// no código do site — não é segurança de nível bancário, mas afasta
+// qualquer visitante casual).
+export const TESTIMONIAL_FORM_PASSWORD = "depoimento2026";
+
 export const NAV_LINKS = [
   { label: "Serviços", href: "/#servicos" },
   { label: "Sobre", href: "/#sobre" },
