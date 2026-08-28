@@ -43,11 +43,12 @@ export default function About() {
       </div>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-52 top-16 hidden h-[110px] w-[520px] rotate-[82deg] opacity-90 lg:block"
+        className="pointer-events-none absolute -right-44 top-8 hidden h-[150px] w-[560px] rotate-[65deg] opacity-90 lg:block"
       >
         <TextLoop
           text="Core Stack"
-          shape="line"
+          shape="wave"
+          curviness={58}
           separator="✦"
           speed={60}
           direction="reverse"
