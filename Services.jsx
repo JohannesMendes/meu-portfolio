@@ -11,7 +11,7 @@ export default function Services() {
           O que eu <span className="text-signal">faço</span>
         </h2>
 
-        <div className="relative mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-hair bg-hair sm:grid-cols-3">
+        <div className="relative z-10 mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-hair bg-hair sm:grid-cols-3">
           {SERVICES.map((service, i) => (
             <div
               key={service.number}
