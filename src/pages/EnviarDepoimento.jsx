@@ -8,14 +8,10 @@ import Footer from "../components/Footer";
 import { db, firebaseReady, storage } from "../lib/firebase";
 import { TESTIMONIAL_FORM_PASSWORD } from "../data/content";
 
-const ACCESS_SESSION_KEY = "jm_testimonial_form_unlocked";
-
 export default function EnviarDepoimento() {
   const [rating, setRating] = useState(5);
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
-  const [unlocked, setUnlocked] = useState(
-    () => localStorage.getItem(ACCESS_SESSION_KEY) === "1"
-  );
+  const [unlocked, setUnlocked] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState(false);
 
@@ -26,7 +22,6 @@ export default function EnviarDepoimento() {
   function handleUnlock(e) {
     e.preventDefault();
     if (passwordInput === TESTIMONIAL_FORM_PASSWORD) {
-      localStorage.setItem(ACCESS_SESSION_KEY, "1");
       setUnlocked(true);
       setPasswordError(false);
     } else {
