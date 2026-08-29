@@ -24,7 +24,7 @@ export default function About() {
   const [imgError, setImgError] = useState(false);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
-  const badgeFace = useBadgeFace("/sua-foto.jpg", "Johannes");
+  const badgeFace = useBadgeFace("/sua-foto.jpg", "Software Engineer");
 
   return (
     <section id="sobre" ref={sectionRef} className="relative overflow-hidden px-5 py-24 sm:px-8 sm:py-32 lg:px-16">
@@ -85,33 +85,40 @@ export default function About() {
 
         <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
           <div data-reveal className="reveal space-y-6">
+            {/* Layout spacer: reserves the original narrow footprint so the
+                bio paragraphs below don't shift. The actual interactive
+                canvas is wider (see below) and floats on top of/past this,
+                since a WebGL <canvas> never draws outside its own pixel
+                bounds — a narrow canvas was clipping the card mid-drag. */}
             <div className="relative -mt-10 h-[460px] w-[284px] sm:-mt-14 sm:h-[540px] sm:w-[333px]">
-              {isInView && badgeFace ? (
-                <Lanyard
-                  position={[0, 0, 16]}
-                  gravity={[0, -40, 0]}
-                  fov={20}
-                  transparent
-                  frontImage={badgeFace}
-                  backImage={badgeFace}
-                  imageFit="cover"
-                  lanyardWidth={1}
-                />
-              ) : !imgError ? (
-                <img
-                  src="/sua-foto.jpg"
-                  alt="Foto de Johannes Mendes"
-                  onError={() => setImgError(true)}
-                  className="absolute bottom-0 left-1/2 h-[284px] w-[284px] -translate-x-1/2 rounded-2xl object-cover sm:h-[333px] sm:w-[333px]"
-                />
-              ) : (
-                <div className="absolute bottom-0 left-1/2 flex h-[284px] w-[284px] -translate-x-1/2 flex-col items-center justify-center gap-2 rounded-2xl border border-hair bg-panel p-4 text-center sm:h-[333px] sm:w-[333px]">
-                  <span className="font-display text-3xl font-extrabold text-signal">JM</span>
-                  <small className="text-xs text-mist">
-                    Adicione o arquivo "sua-foto.jpg" na pasta do site para exibir sua foto aqui
-                  </small>
-                </div>
-              )}
+              <div className="absolute inset-y-0 left-0 w-[560px] sm:w-[660px]">
+                {isInView && badgeFace ? (
+                  <Lanyard
+                    position={[3.4, 0, 16]}
+                    gravity={[0, -40, 0]}
+                    fov={20}
+                    transparent
+                    frontImage={badgeFace}
+                    backImage={badgeFace}
+                    imageFit="cover"
+                    lanyardWidth={1}
+                  />
+                ) : !imgError ? (
+                  <img
+                    src="/sua-foto.jpg"
+                    alt="Foto de Johannes Mendes"
+                    onError={() => setImgError(true)}
+                    className="absolute bottom-0 left-0 h-[284px] w-[284px] rounded-2xl object-cover sm:h-[333px] sm:w-[333px]"
+                  />
+                ) : (
+                  <div className="absolute bottom-0 left-0 flex h-[284px] w-[284px] flex-col items-center justify-center gap-2 rounded-2xl border border-hair bg-panel p-4 text-center sm:h-[333px] sm:w-[333px]">
+                    <span className="font-display text-3xl font-extrabold text-signal">JM</span>
+                    <small className="text-xs text-mist">
+                      Adicione o arquivo "sua-foto.jpg" na pasta do site para exibir sua foto aqui
+                    </small>
+                  </div>
+                )}
+              </div>
             </div>
 
             {ABOUT_PARAGRAPHS.map((p) => (

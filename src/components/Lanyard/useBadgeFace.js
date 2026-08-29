@@ -9,9 +9,12 @@ import { useEffect, useState } from "react";
  * puts "JOHANNES" under the photo, like a real printed badge.
  *
  * The photo is drawn "contain" (never cropped/cover-filled) inside a
- * graphite frame with generous padding, so any white/light background in
- * the source photo itself never touches the card edges — the whole face
- * reads as dark/graphite even before the 3D scene's lighting hits it.
+ * graphite frame with generous, symmetric padding on all four sides, so
+ * any white/light background in the source photo itself never touches
+ * the card edges — the whole face reads as dark/graphite even before the
+ * 3D scene's lighting hits it. The photo itself gets a small +3%
+ * brightness boost baked into the texture (independent of the 3D scene's
+ * own lights, which are tuned separately in Lanyard.jsx).
  */
 export function useBadgeFace(photoSrc, name) {
   const [dataUrl, setDataUrl] = useState(null);
@@ -37,12 +40,14 @@ export function useBadgeFace(photoSrc, name) {
 
       // Photo area: contain-fit inside a padded, rounded graphite frame so a
       // light/white source photo background never washes out the card.
+      // Padding is subtracted from BOTH top and bottom (and left/right) so
+      // the photo sits dead-center inside the frame, not closer to one edge.
       const padding = 36;
       const photoH = H * 0.74;
       const frameX = padding;
       const frameY = padding;
       const frameW = W - padding * 2;
-      const frameH = photoH - padding;
+      const frameH = photoH - padding * 2;
 
       const frameRadius = 20;
       ctx.save();
@@ -62,20 +67,22 @@ export function useBadgeFace(photoSrc, name) {
       const dh = img.height * scale;
       const dx = frameX + (frameW - dw) / 2;
       const dy = frameY + (frameH - dh) / 2;
+      ctx.filter = "brightness(1.03)";
       ctx.drawImage(img, dx, dy, dw, dh);
+      ctx.filter = "none";
       ctx.restore();
 
       // Thin red accent line separating photo from name plate
       ctx.fillStyle = "#ff3b30";
       ctx.fillRect(0, photoH, W, 6);
 
-      // Name plate — first name only, uppercase, bold
+      // Name plate — role label, uppercase, bold, sized to fit on one line
       ctx.fillStyle = "#111111";
       ctx.fillRect(0, photoH + 6, W, H - photoH - 6);
       ctx.fillStyle = "#ffffff";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.font = "800 64px Arial, sans-serif";
+      ctx.font = "800 42px Arial, sans-serif";
       ctx.fillText(name.toUpperCase(), W / 2, photoH + (H - photoH) / 2);
 
       setDataUrl(canvas.toDataURL("image/png"));
