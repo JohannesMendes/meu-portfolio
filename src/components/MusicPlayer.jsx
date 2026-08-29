@@ -53,8 +53,8 @@ const PLAYLIST = [
     lyrics: null,
   },
   {
-    title: "PTBR",
-    artist: "",
+    title: "Leave Me Alone",
+    artist: "Michael Jackson",
     src: "/audio/track-3.mp3",
     coverUrl: null,
     lyrics: null,
