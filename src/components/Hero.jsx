@@ -166,7 +166,7 @@ export default function Hero() {
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "linear-gradient(110deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.6) 45%, rgba(10,10,10,0.3) 100%)",
+                "linear-gradient(110deg, rgba(10,10,10,0.81) 0%, rgba(10,10,10,0.57) 45%, rgba(10,10,10,0.285) 100%)",
               opacity: Math.max(0.3, 1 - progress),
             }}
           />
