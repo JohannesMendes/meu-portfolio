@@ -80,7 +80,7 @@ export default function EnviarDepoimento() {
             to="/"
             className="inline-flex items-center gap-1.5 font-mono text-sm text-mist transition-colors hover:text-paper"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={18} />
             Voltar para a home
           </Link>
 
@@ -98,7 +98,7 @@ export default function EnviarDepoimento() {
               className="mt-10 flex flex-col gap-4 rounded-2xl border border-hair bg-panel p-6 sm:p-8"
             >
               <div className="flex items-center gap-2 text-mist">
-                <Lock size={18} />
+                <Lock size={20} />
                 <span className="text-sm">Página protegida por senha</span>
               </div>
               <p className="text-sm text-mist">
@@ -134,7 +134,7 @@ export default function EnviarDepoimento() {
             </div>
           ) : status === "sent" ? (
             <div className="mt-10 flex flex-col items-center gap-3 rounded-2xl border border-hair bg-panel p-10 text-center">
-              <CheckCircle2 className="text-signal" size={32} />
+              <CheckCircle2 className="text-signal" size={35} />
               <p className="font-display text-lg font-bold text-paper">
                 Depoimento enviado!
               </p>
@@ -205,7 +205,7 @@ export default function EnviarDepoimento() {
                       className="p-0.5"
                     >
                       <Star
-                        size={26}
+                        size={29}
                         style={{
                           fill: value <= rating ? "var(--color-signal)" : "transparent",
                           color: value <= rating ? "var(--color-signal)" : "var(--color-mist)",

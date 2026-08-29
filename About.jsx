@@ -23,7 +23,7 @@ export default function About() {
           side past the stack card. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-20 -top-6 hidden h-[130px] w-[600px] -rotate-[24deg] opacity-90 lg:block"
+        className="pointer-events-none absolute -left-20 -top-6 hidden h-[143px] w-[660px] -rotate-[24deg] opacity-90 lg:block"
       >
         <TextLoop
           text="Sobre Mim"
@@ -31,19 +31,19 @@ export default function About() {
           curviness={40}
           separator="✦"
           speed={65}
-          fontSize={22}
+          fontSize={24}
           fontWeight={800}
           letterSpacing={2}
           color="#ffffff"
           ribbon
           ribbonColor="var(--color-signal)"
-          ribbonWidth={39.1}
+          ribbonWidth={43}
           pauseOnHover={false}
         />
       </div>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-72 top-8 hidden h-[150px] w-[720px] rotate-[65deg] opacity-90 lg:block"
+        className="pointer-events-none absolute -right-72 top-8 hidden h-[165px] w-[792px] rotate-[65deg] opacity-90 lg:block"
       >
         <TextLoop
           text="Core Stack"
@@ -52,13 +52,13 @@ export default function About() {
           separator="✦"
           speed={60}
           direction="reverse"
-          fontSize={20}
+          fontSize={22}
           fontWeight={800}
           letterSpacing={2}
           color="#ffffff"
           ribbon
           ribbonColor="var(--color-signal)"
-          ribbonWidth={34.5}
+          ribbonWidth={38}
           pauseOnHover={false}
         />
       </div>

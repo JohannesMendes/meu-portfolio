@@ -53,7 +53,7 @@ function TestimonialCard({ testimonial }) {
         {Array.from({ length: rating }).map((_, i) => (
           <Star
             key={i}
-            size={16}
+            size={18}
             style={{ fill: "var(--color-signal)", color: "var(--color-signal)" }}
           />
         ))}

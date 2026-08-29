@@ -34,7 +34,7 @@ export default function ProjectCard({ project, className = "", ...rest }) {
         <p className="text-sm leading-relaxed text-mist">{project.description}</p>
         <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-signal">
           Acessar Site
-          <ArrowUpRight size={16} />
+          <ArrowUpRight size={18} />
         </span>
       </div>
     </a>
