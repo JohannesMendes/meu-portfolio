@@ -8,11 +8,17 @@ import { useBadgeFace } from "./Lanyard/useBadgeFace";
 /**
  * About
  * ---------------------------------------------------------------------
- * The profile photo is now a physics-based hanging badge (<Lanyard />)
- * instead of a static <img>. It mounts only once the section scrolls
- * into view (useInView, once: true) so the 3D/physics canvas never runs
- * off-screen, and it renders inside the exact same box the static photo
- * used to occupy (284px mobile / 333px sm+), so the layout is unchanged.
+ * The profile photo is a physics-based hanging badge (<Lanyard />) that
+ * mounts once the section scrolls into view (useInView, once: true). It
+ * lives in a taller, transparent, borderless box (pulled up with a
+ * negative top margin) so the lanyard cord has room to fall from above
+ * the card into view before settling — floating freely over the page
+ * background instead of sitting inside a boxed card like the old static
+ * photo did. The card itself sits near the bottom of that box, right
+ * above the bio paragraphs, and camera position [0,0,16] (vs. the
+ * original 13) scales it down slightly so it lines up with the bio text
+ * without overlapping the "Sobre Mim" heading above or the paragraphs
+ * below.
  */
 export default function About() {
   const [imgError, setImgError] = useState(false);
@@ -79,10 +85,10 @@ export default function About() {
 
         <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
           <div data-reveal className="reveal space-y-6">
-            <div className="h-[284px] w-[284px] overflow-hidden rounded-2xl border border-hair bg-panel sm:h-[333px] sm:w-[333px]">
+            <div className="relative -mt-10 h-[460px] w-[284px] sm:-mt-14 sm:h-[540px] sm:w-[333px]">
               {isInView && badgeFace ? (
                 <Lanyard
-                  position={[0, 0, 13]}
+                  position={[0, 0, 16]}
                   gravity={[0, -40, 0]}
                   fov={20}
                   transparent
@@ -96,10 +102,10 @@ export default function About() {
                   src="/sua-foto.jpg"
                   alt="Foto de Johannes Mendes"
                   onError={() => setImgError(true)}
-                  className="h-full w-full object-cover"
+                  className="absolute bottom-0 left-1/2 h-[284px] w-[284px] -translate-x-1/2 rounded-2xl object-cover sm:h-[333px] sm:w-[333px]"
                 />
               ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-center">
+                <div className="absolute bottom-0 left-1/2 flex h-[284px] w-[284px] -translate-x-1/2 flex-col items-center justify-center gap-2 rounded-2xl border border-hair bg-panel p-4 text-center sm:h-[333px] sm:w-[333px]">
                   <span className="font-display text-3xl font-extrabold text-signal">JM</span>
                   <small className="text-xs text-mist">
                     Adicione o arquivo "sua-foto.jpg" na pasta do site para exibir sua foto aqui
