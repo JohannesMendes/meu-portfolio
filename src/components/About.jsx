@@ -1,21 +1,27 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useInView } from "framer-motion";
 import { ABOUT_PARAGRAPHS, ABOUT_PHILOSOPHY, CORE_STACK } from "../data/content";
 import TextLoop from "./TextLoop";
+import Lanyard from "./Lanyard/Lanyard";
+import { useBadgeFace } from "./Lanyard/useBadgeFace";
 
 /**
  * About
  * ---------------------------------------------------------------------
- * The profile photo is intentionally STATIC here — no scroll-expansion
- * animation. That effect now lives exclusively on the Hero video (see
- * Hero.jsx). The photo is simply sized up ~18% versus the original
- * (208px -> 284px mobile baseline, 240px -> 333px sm+), giving it more
- * visual weight without any scroll-linked behavior.
+ * The profile photo is now a physics-based hanging badge (<Lanyard />)
+ * instead of a static <img>. It mounts only once the section scrolls
+ * into view (useInView, once: true) so the 3D/physics canvas never runs
+ * off-screen, and it renders inside the exact same box the static photo
+ * used to occupy (284px mobile / 333px sm+), so the layout is unchanged.
  */
 export default function About() {
   const [imgError, setImgError] = useState(false);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  const badgeFace = useBadgeFace("/sua-foto.jpg", "Johannes Mendes");
 
   return (
-    <section id="sobre" className="relative overflow-hidden px-5 py-24 sm:px-8 sm:py-32 lg:px-16">
+    <section id="sobre" ref={sectionRef} className="relative overflow-hidden px-5 py-24 sm:px-8 sm:py-32 lg:px-16">
       <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-signal/10 blur-3xl" />
 
       {/* Decorative animated strokes — mirrors the hand-drawn reference:
@@ -74,7 +80,18 @@ export default function About() {
         <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
           <div data-reveal className="reveal space-y-6">
             <div className="h-[284px] w-[284px] overflow-hidden rounded-2xl border border-hair bg-panel sm:h-[333px] sm:w-[333px]">
-              {!imgError ? (
+              {isInView && badgeFace ? (
+                <Lanyard
+                  position={[0, 0, 13]}
+                  gravity={[0, -40, 0]}
+                  fov={20}
+                  transparent
+                  frontImage={badgeFace}
+                  backImage={badgeFace}
+                  imageFit="cover"
+                  lanyardWidth={1}
+                />
+              ) : !imgError ? (
                 <img
                   src="/sua-foto.jpg"
                   alt="Foto de Johannes Mendes"

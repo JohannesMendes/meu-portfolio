@@ -1,0 +1,22 @@
+Esta pasta precisa de 2 arquivos para o crachá 3D (Lanyard) funcionar:
+
+1. card.glb
+   - Baixe em: https://reactbits.dev (componente "Lanyard" > arquivos em src/assets/lanyard)
+   - Ou em: https://github.com/DavidHDev/react-bits (mesmo caminho)
+   - Salve exatamente como: src/assets/lanyard/card.glb
+
+2. lanyard.png
+   - É a textura do cordão (band). Pode usar a padrão do React Bits (mesmo
+     repositório acima) ou substituir por uma sua depois — cordão preto com
+     as logos brancas é só editar essa imagem em qualquer editor.
+   - Salve exatamente como: src/assets/lanyard/lanyard.png
+
+Sem esses dois arquivos, o projeto NÃO builda (o import em Lanyard.jsx vai
+quebrar). Assim que colocar os dois aqui, pode rodar "npm run dev" normalmente.
+
+Depois de testar no navegador, talvez seja necessário ajustar o prop
+"position" do <Lanyard /> em About.jsx (linha onde ele é renderizado) para
+o crachá ficar perfeitamente enquadrado dentro da caixa quadrada de
+284px/333px — como não tenho como renderizar WebGL aqui para conferir
+visualmente, position={[0, 0, 13]} é um ponto de partida razoável, não a
+palavra final.
