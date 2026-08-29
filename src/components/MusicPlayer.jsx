@@ -18,18 +18,20 @@ import {
  * ---------------------------------------------------------------------
  * A compact icon button inline in the footer. Clicking it opens a
  * popover with the full player: album art (falls back to a rotating
- * music-note disc when a track has no coverUrl), a seekable progress
- * bar, volume/mute, shuffle/repeat, and prev/next across the playlist.
- * Audio never autoplays — playback only starts once the visitor clicks.
+ * music-note disc when a track has no cover), a seekable progress bar,
+ * volume/mute, shuffle/repeat, and prev/next across the playlist. Audio
+ * never autoplays — playback only starts once the visitor clicks.
  *
- * `coverUrl` is left null for all 3 tracks below (no artwork was
- * supplied yet) — drop image files in /public/covers/ and set the path
- * here to enable real album art; the icon fallback keeps working either
- * way. `lyrics` is intentionally left as a placeholder string, NOT the
- * real song lyrics — lyrics are copyrighted text, separate from owning
- * the audio file itself, and publishing them on a public site is its
- * own rights question. Fill `lyrics` in only for songs you have
- * permission to display the text of.
+ * `coverUrl` (or `cover`) is left null for all 3 tracks below — drop
+ * image files in /public/covers/ and set the path here to enable real
+ * album art; the icon fallback keeps working either way.
+ *
+ * `lyrics`: if a track already has this string filled in, it's shown
+ * as-is (no fetch). If it's null (the default here), the lyrics panel
+ * fetches plain lyrics at runtime from the free lrclib.net API using
+ * the track's title + artist, and caches the result per track for the
+ * session. This runs in the visitor's browser against a public API —
+ * nothing here bakes third-party lyrics text into the codebase itself.
  */
 const PLAYLIST = [
   {
@@ -48,12 +50,14 @@ const PLAYLIST = [
   },
   {
     title: "PTBR",
-    artist: "Faixa 3",
+    artist: "",
     src: "/audio/track-3.mp3",
     coverUrl: null,
     lyrics: null,
   },
 ];
+
+const LRCLIB_ENDPOINT = "https://lrclib.net/api/get";
 
 function formatTime(t) {
   if (Number.isNaN(t)) return "00:00";
@@ -73,10 +77,12 @@ export default function MusicPlayer() {
   const [volume, setVolume] = useState(0.7);
   const [muted, setMuted] = useState(false);
   const [coverFailed, setCoverFailed] = useState(false);
+  const [lyricsByTrack, setLyricsByTrack] = useState({});
   const audioRef = useRef(null);
 
   const track = PLAYLIST[trackIndex];
-  const showCover = track.coverUrl && !coverFailed;
+  const cover = track.coverUrl || track.cover || null;
+  const showCover = cover && !coverFailed;
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -94,6 +100,54 @@ export default function MusicPlayer() {
 
   useEffect(() => {
     setCoverFailed(false);
+  }, [trackIndex]);
+
+  // Fetch lyrics for the current track from lrclib.net, unless the track
+  // already has `lyrics` filled in manually, or we've already fetched it.
+  useEffect(() => {
+    const idx = trackIndex;
+    const current = PLAYLIST[idx];
+
+    if (current.lyrics) {
+      setLyricsByTrack((prev) => ({
+        ...prev,
+        [idx]: { status: "done", text: current.lyrics },
+      }));
+      return;
+    }
+
+    setLyricsByTrack((prev) => {
+      if (prev[idx]) return prev; // already fetched or in flight
+      return { ...prev, [idx]: { status: "loading", text: null } };
+    });
+
+    if (lyricsByTrack[idx]) return;
+
+    const controller = new AbortController();
+    const params = new URLSearchParams({
+      track_name: current.title || "",
+      artist_name: current.artist || "",
+    });
+
+    fetch(`${LRCLIB_ENDPOINT}?${params.toString()}`, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error("not found");
+        return res.json();
+      })
+      .then((data) => {
+        const text = data?.plainLyrics?.trim() || null;
+        setLyricsByTrack((prev) => ({
+          ...prev,
+          [idx]: { status: text ? "done" : "empty", text },
+        }));
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") return;
+        setLyricsByTrack((prev) => ({ ...prev, [idx]: { status: "error", text: null } }));
+      });
+
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trackIndex]);
 
   function nextTrack() {
@@ -137,6 +191,7 @@ export default function MusicPlayer() {
 
   const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
   const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
+  const lyricsState = lyricsByTrack[trackIndex];
 
   return (
     <div className="relative">
@@ -149,13 +204,11 @@ export default function MusicPlayer() {
         onEnded={handleEnded}
       />
 
-      {/* Lyrics side panel — fixed to the right edge of the viewport,
-          independent of the footer's scroll position. Only visible while
-          actually playing (fades in/out with isPlaying, never just
-          display:none-toggled so the transition reads intentionally).
-          Fully transparent background + a very soft blur, so it never
-          reads as a solid card sitting on top of the page. Hidden below
-          lg so it can't cover content on narrower screens. */}
+      {/* Lyrics panel — fixed to the far right edge of the viewport,
+          fully independent of the footer's scroll position. Visible
+          only while actually playing. No card, no border, no blur —
+          just the text itself floating over the page, with a soft
+          text-shadow so it stays legible over whatever sits behind it. */}
       <AnimatePresence>
         {isPlaying && (
           <motion.aside
@@ -163,19 +216,36 @@ export default function MusicPlayer() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 16 }}
             transition={{ duration: 0.35 }}
-            className="fixed right-6 top-1/2 z-40 hidden max-h-[65vh] w-72 -translate-y-1/2 overflow-y-auto rounded-2xl border border-hair/40 bg-transparent p-5 backdrop-blur-[2px] lg:block"
+            style={{ position: "fixed", right: "2rem", top: "50%", transform: "translateY(-50%)" }}
+            className="z-40 hidden max-h-[65vh] w-72 scroll-smooth overflow-y-auto bg-transparent pr-1 lg:block"
           >
-            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-signal">
+            <p
+              className="mb-1 text-xs font-semibold uppercase tracking-wide text-signal"
+              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}
+            >
               {track.title}
             </p>
-            <p className="mb-4 text-[11px] text-mist">{track.artist}</p>
-            {track.lyrics ? (
-              <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-paper/90">
-                {track.lyrics}
+            {track.artist && (
+              <p className="mb-4 text-[11px] text-mist" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}>
+                {track.artist}
+              </p>
+            )}
+            {lyricsState?.status === "loading" && (
+              <p className="text-sm italic text-mist" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}>
+                Buscando letra...
+              </p>
+            )}
+            {lyricsState?.status === "done" && (
+              <pre
+                className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-paper"
+                style={{ textShadow: "0 2px 10px rgba(0,0,0,0.9)" }}
+              >
+                {lyricsState.text}
               </pre>
-            ) : (
-              <p className="text-sm italic text-mist">
-                Letra não disponível para esta faixa.
+            )}
+            {(lyricsState?.status === "empty" || lyricsState?.status === "error") && (
+              <p className="text-sm italic text-mist" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}>
+                Letra não encontrada para esta faixa.
               </p>
             )}
           </motion.aside>
@@ -199,7 +269,7 @@ export default function MusicPlayer() {
               >
                 {showCover ? (
                   <img
-                    src={track.coverUrl}
+                    src={cover}
                     alt={`Capa de ${track.title}`}
                     onError={() => setCoverFailed(true)}
                     className="h-full w-full object-cover"
@@ -210,7 +280,7 @@ export default function MusicPlayer() {
               </motion.div>
 
               <h4 className="text-base font-bold text-paper">{track.title}</h4>
-              <p className="mb-4 text-xs text-mist">{track.artist}</p>
+              {track.artist && <p className="mb-4 text-xs text-mist">{track.artist}</p>}
 
               <div className="mb-3 flex w-full items-center gap-2">
                 <span className="w-10 text-right font-mono text-[10px] text-mist">
@@ -308,7 +378,7 @@ export default function MusicPlayer() {
         }`}
       >
         {showCover ? (
-          <img src={track.coverUrl} alt="" className="h-full w-full object-cover" />
+          <img src={cover} alt="" className="h-full w-full object-cover" />
         ) : (
           <Music size={16} />
         )}
