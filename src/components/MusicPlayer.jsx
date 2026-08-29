@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Music,
@@ -26,12 +26,16 @@ import {
  * image files in /public/covers/ and set the path here to enable real
  * album art; the icon fallback keeps working either way.
  *
- * `lyrics`: if a track already has this string filled in, it's shown
- * as-is (no fetch). If it's null (the default here), the lyrics panel
- * fetches plain lyrics at runtime from the free lrclib.net API using
- * the track's title + artist, and caches the result per track for the
- * session. This runs in the visitor's browser against a public API —
- * nothing here bakes third-party lyrics text into the codebase itself.
+ * Lyrics run karaoke-style: only the active line + one line of context
+ * before/after are ever on screen, no full scrolling block. They're
+ * fetched at runtime from the free lrclib.net API (title + artist),
+ * preferring the timestamped `syncedLyrics` field so the active line
+ * tracks the audio's real currentTime; if a track only has untimed
+ * `plainLyrics`, the active line is estimated from playback percentage
+ * instead. If a track already has a manual `lyrics` string set, it's
+ * treated the same as untimed plain lyrics (one line per newline).
+ * Nothing here bakes third-party lyrics text into the codebase itself —
+ * it's all fetched live, in the visitor's browser.
  */
 const PLAYLIST = [
   {
@@ -64,6 +68,34 @@ function formatTime(t) {
   const m = Math.floor(t / 60);
   const s = Math.floor(t % 60);
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+// Parses standard LRC timestamps like "[01:23.45]Line text" into
+// { time (seconds), text } entries, sorted by time.
+function parseSyncedLyrics(lrc) {
+  const timeTag = /\[(\d{2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
+  const lines = [];
+  for (const rawLine of lrc.split("\n")) {
+    const matches = [...rawLine.matchAll(timeTag)];
+    if (matches.length === 0) continue;
+    const text = rawLine.replace(timeTag, "").trim();
+    if (!text) continue;
+    for (const m of matches) {
+      const minutes = parseInt(m[1], 10);
+      const seconds = parseInt(m[2], 10);
+      const fraction = m[3] ? parseInt(m[3].padEnd(3, "0"), 10) : 0;
+      lines.push({ time: minutes * 60 + seconds + fraction / 1000, text });
+    }
+  }
+  return lines.sort((a, b) => a.time - b.time);
+}
+
+function parsePlainLyrics(text) {
+  return text
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((text) => ({ time: null, text }));
 }
 
 export default function MusicPlayer() {
@@ -102,8 +134,7 @@ export default function MusicPlayer() {
     setCoverFailed(false);
   }, [trackIndex]);
 
-  // Fetch lyrics for the current track from lrclib.net, unless the track
-  // already has `lyrics` filled in manually, or we've already fetched it.
+  // Fetch lyrics for the current track, unless already provided/cached.
   useEffect(() => {
     const idx = trackIndex;
     const current = PLAYLIST[idx];
@@ -111,14 +142,14 @@ export default function MusicPlayer() {
     if (current.lyrics) {
       setLyricsByTrack((prev) => ({
         ...prev,
-        [idx]: { status: "done", text: current.lyrics },
+        [idx]: { status: "done", mode: "plain", lines: parsePlainLyrics(current.lyrics) },
       }));
       return;
     }
 
     setLyricsByTrack((prev) => {
       if (prev[idx]) return prev; // already fetched or in flight
-      return { ...prev, [idx]: { status: "loading", text: null } };
+      return { ...prev, [idx]: { status: "loading", mode: null, lines: [] } };
     });
 
     if (lyricsByTrack[idx]) return;
@@ -135,15 +166,27 @@ export default function MusicPlayer() {
         return res.json();
       })
       .then((data) => {
-        const text = data?.plainLyrics?.trim() || null;
-        setLyricsByTrack((prev) => ({
-          ...prev,
-          [idx]: { status: text ? "done" : "empty", text },
-        }));
+        const synced = data?.syncedLyrics?.trim();
+        const plain = data?.plainLyrics?.trim();
+        if (synced) {
+          const lines = parseSyncedLyrics(synced);
+          setLyricsByTrack((prev) => ({
+            ...prev,
+            [idx]: { status: lines.length ? "done" : "empty", mode: "synced", lines },
+          }));
+        } else if (plain) {
+          const lines = parsePlainLyrics(plain);
+          setLyricsByTrack((prev) => ({
+            ...prev,
+            [idx]: { status: lines.length ? "done" : "empty", mode: "plain", lines },
+          }));
+        } else {
+          setLyricsByTrack((prev) => ({ ...prev, [idx]: { status: "empty", mode: null, lines: [] } }));
+        }
       })
       .catch((err) => {
         if (err.name === "AbortError") return;
-        setLyricsByTrack((prev) => ({ ...prev, [idx]: { status: "error", text: null } }));
+        setLyricsByTrack((prev) => ({ ...prev, [idx]: { status: "error", mode: null, lines: [] } }));
       });
 
     return () => controller.abort();
@@ -193,6 +236,27 @@ export default function MusicPlayer() {
   const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
   const lyricsState = lyricsByTrack[trackIndex];
 
+  // Which line is "active" right now — by real timestamp for synced
+  // lyrics, or by playback percentage for untimed plain lyrics.
+  const activeLineIndex = useMemo(() => {
+    if (!lyricsState || lyricsState.status !== "done") return -1;
+    const lines = lyricsState.lines;
+    if (lines.length === 0) return -1;
+
+    if (lyricsState.mode === "synced") {
+      let idx = 0;
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].time <= currentTime) idx = i;
+        else break;
+      }
+      return idx;
+    }
+
+    if (!duration) return 0;
+    const pct = Math.min(1, Math.max(0, currentTime / duration));
+    return Math.min(lines.length - 1, Math.floor(pct * lines.length));
+  }, [lyricsState, currentTime, duration]);
+
   return (
     <div className="relative">
       <audio
@@ -204,11 +268,13 @@ export default function MusicPlayer() {
         onEnded={handleEnded}
       />
 
-      {/* Lyrics panel — fixed to the far right edge of the viewport,
-          fully independent of the footer's scroll position. Visible
-          only while actually playing. No card, no border, no blur —
-          just the text itself floating over the page, with a soft
-          text-shadow so it stays legible over whatever sits behind it. */}
+      {/* Karaoke-style lyrics — fixed to the far right edge of the
+          viewport. Only ever shows the active line plus one line of
+          context before/after (never the full block), so it reads like
+          Instagram Stories captions instead of a wall of static text.
+          No box, no border, no scrollbar — just text, sized/opacity-
+          faded by proximity to the active line, crossfading as the
+          active line changes. Visible only while actually playing. */}
       <AnimatePresence>
         {isPlaying && (
           <motion.aside
@@ -217,36 +283,52 @@ export default function MusicPlayer() {
             exit={{ opacity: 0, x: 16 }}
             transition={{ duration: 0.35 }}
             style={{ position: "fixed", right: "2rem", top: "50%", transform: "translateY(-50%)" }}
-            className="z-40 hidden max-h-[65vh] w-72 scroll-smooth overflow-y-auto bg-transparent pr-1 lg:block"
+            className="z-40 hidden w-72 overflow-hidden bg-transparent lg:block"
           >
-            <p
-              className="mb-1 text-xs font-semibold uppercase tracking-wide text-signal"
-              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}
-            >
-              {track.title}
-            </p>
-            {track.artist && (
-              <p className="mb-4 text-[11px] text-mist" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}>
-                {track.artist}
-              </p>
-            )}
             {lyricsState?.status === "loading" && (
               <p className="text-sm italic text-mist" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}>
                 Buscando letra...
               </p>
             )}
-            {lyricsState?.status === "done" && (
-              <pre
-                className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-paper"
-                style={{ textShadow: "0 2px 10px rgba(0,0,0,0.9)" }}
-              >
-                {lyricsState.text}
-              </pre>
-            )}
             {(lyricsState?.status === "empty" || lyricsState?.status === "error") && (
               <p className="text-sm italic text-mist" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}>
                 Letra não encontrada para esta faixa.
               </p>
+            )}
+            {lyricsState?.status === "done" && activeLineIndex >= 0 && (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeLineIndex}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="flex flex-col gap-3 text-right"
+                >
+                  {activeLineIndex > 0 && (
+                    <p
+                      className="text-sm font-medium text-paper opacity-40"
+                      style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}
+                    >
+                      {lyricsState.lines[activeLineIndex - 1].text}
+                    </p>
+                  )}
+                  <p
+                    className="bg-gradient-to-r from-paper to-signal bg-clip-text text-xl font-extrabold leading-snug text-transparent"
+                    style={{ filter: "drop-shadow(0 2px 12px rgba(0,0,0,0.9))" }}
+                  >
+                    {lyricsState.lines[activeLineIndex].text}
+                  </p>
+                  {activeLineIndex < lyricsState.lines.length - 1 && (
+                    <p
+                      className="text-sm font-medium text-paper opacity-40"
+                      style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85)" }}
+                    >
+                      {lyricsState.lines[activeLineIndex + 1].text}
+                    </p>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             )}
           </motion.aside>
         )}
