@@ -24,7 +24,7 @@ export default function About() {
   const [imgError, setImgError] = useState(false);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
-  const badgeFace = useBadgeFace("/sua-foto.jpg", "Johannes Mendes");
+  const badgeFace = useBadgeFace("/sua-foto.jpg", "Johannes");
 
   return (
     <section id="sobre" ref={sectionRef} className="relative overflow-hidden px-5 py-24 sm:px-8 sm:py-32 lg:px-16">
