@@ -1,0 +1,16 @@
+Coloque aqui as imagens de capa das faixas (formato .jpg ou .png,
+quadradas funcionam melhor — ex: 500x500px).
+
+Depois, abra src/components/MusicPlayer.jsx e troque o campo "coverUrl"
+de cada faixa no array PLAYLIST, de null para o caminho do arquivo:
+
+  {
+    title: "Loser",
+    artist: "Tame Impala",
+    src: "/audio/track-1.mp3",
+    coverUrl: "/covers/loser.jpg",   <- antes era null
+    lyrics: null,
+  },
+
+Sem isso, o player continua funcionando normalmente e mostra o ícone de
+nota musical girando no lugar da capa (fallback automático).
