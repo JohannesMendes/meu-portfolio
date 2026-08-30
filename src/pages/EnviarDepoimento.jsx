@@ -4,7 +4,6 @@ import { ArrowLeft, CheckCircle2, Lock, Star } from "lucide-react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import { db, firebaseReady, storage } from "../lib/firebase";
 import { TESTIMONIAL_FORM_PASSWORD } from "../data/content";
 
@@ -243,7 +242,6 @@ export default function EnviarDepoimento() {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import ProjectCard from "../components/ProjectCard";
 import { PROJECTS, PROJECT_CATEGORIES } from "../data/content";
 
@@ -69,7 +68,6 @@ export default function ProjectsPage() {
           ))}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
