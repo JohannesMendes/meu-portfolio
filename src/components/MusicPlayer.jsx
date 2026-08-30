@@ -138,27 +138,50 @@ export default function MusicPlayer() {
     }
   }, [isPlaying, trackIndex]);
 
-  // Attempt to autoplay the first track at page load. Browsers commonly
-  // block audio autoplay until the visitor has interacted with the page
-  // at all — if that happens, `setIsPlaying(true)` above will fail
-  // silently (the .catch resets it to false) and we fall back to
-  // starting playback on the very first click/tap/keypress anywhere on
-  // the page. Either way this is still the SYSTEM starting playback,
-  // not the visitor choosing to — userControlled stays false.
+  // Attempt to autoplay the first track at page load. Browsers only
+  // honor audio.play() as a valid "user-gesture" call when it runs
+  // synchronously inside the gesture's own event handler — routing it
+  // through a React state update first (setIsPlaying -> re-render ->
+  // effect -> play()) loses that direct link and gets silently blocked
+  // by Safari/Chrome. So: try immediately on mount (works for repeat
+  // visitors some browsers already trust), and if that's rejected, call
+  // audio.play() directly inside the very first click/tap/key press
+  // listener itself — no state indirection in between. Either path is
+  // still the SYSTEM starting playback, not the visitor choosing to —
+  // userControlled stays false.
   useEffect(() => {
-    setIsPlaying(true);
+    const audio = audioRef.current;
+    if (!audio) return;
+    let started = false;
 
-    function resumeOnFirstInteraction() {
-      setIsPlaying((already) => already || true);
+    function cleanup() {
+      window.removeEventListener("click", tryStart);
+      window.removeEventListener("keydown", tryStart);
+      window.removeEventListener("touchstart", tryStart);
+      window.removeEventListener("pointerdown", tryStart);
     }
-    window.addEventListener("click", resumeOnFirstInteraction, { once: true });
-    window.addEventListener("keydown", resumeOnFirstInteraction, { once: true });
-    window.addEventListener("touchstart", resumeOnFirstInteraction, { once: true });
-    return () => {
-      window.removeEventListener("click", resumeOnFirstInteraction);
-      window.removeEventListener("keydown", resumeOnFirstInteraction);
-      window.removeEventListener("touchstart", resumeOnFirstInteraction);
-    };
+
+    function tryStart() {
+      if (started) return;
+      audio
+        .play()
+        .then(() => {
+          started = true;
+          setIsPlaying(true);
+          cleanup();
+        })
+        .catch(() => {
+          /* still blocked — keep waiting for a real gesture */
+        });
+    }
+
+    tryStart();
+    window.addEventListener("click", tryStart, { once: true });
+    window.addEventListener("keydown", tryStart, { once: true });
+    window.addEventListener("touchstart", tryStart, { once: true });
+    window.addEventListener("pointerdown", tryStart, { once: true });
+
+    return cleanup;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
