@@ -106,10 +106,22 @@ export default function MusicPlayer() {
   const [repeat, setRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [volume, setVolume] = useState(0.7);
+  const [volume, setVolume] = useState(0.3);
   const [muted, setMuted] = useState(false);
   const [coverFailed, setCoverFailed] = useState(false);
   const [lyricsByTrack, setLyricsByTrack] = useState({});
+  // `revealed`: becomes true the first time the visitor clicks the note
+  // button in the footer. Before that, even though audio may already be
+  // autoplaying quietly, the button shows no "playing" highlight and the
+  // lyrics panel never renders — nothing on screen hints that anything
+  // is happening until the visitor opens the player themselves.
+  const [revealed, setRevealed] = useState(false);
+  // `userControlled`: becomes true the first time the visitor presses
+  // any transport control (play/pause, next, previous). Distinguishes
+  // "the system autoplayed this" from "the visitor is driving playback"
+  // — see handleEnded below, where this changes what happens when a
+  // track finishes.
+  const [userControlled, setUserControlled] = useState(false);
   const audioRef = useRef(null);
 
   const track = PLAYLIST[trackIndex];
@@ -125,6 +137,30 @@ export default function MusicPlayer() {
       audio.pause();
     }
   }, [isPlaying, trackIndex]);
+
+  // Attempt to autoplay the first track at page load. Browsers commonly
+  // block audio autoplay until the visitor has interacted with the page
+  // at all — if that happens, `setIsPlaying(true)` above will fail
+  // silently (the .catch resets it to false) and we fall back to
+  // starting playback on the very first click/tap/keypress anywhere on
+  // the page. Either way this is still the SYSTEM starting playback,
+  // not the visitor choosing to — userControlled stays false.
+  useEffect(() => {
+    setIsPlaying(true);
+
+    function resumeOnFirstInteraction() {
+      setIsPlaying((already) => already || true);
+    }
+    window.addEventListener("click", resumeOnFirstInteraction, { once: true });
+    window.addEventListener("keydown", resumeOnFirstInteraction, { once: true });
+    window.addEventListener("touchstart", resumeOnFirstInteraction, { once: true });
+    return () => {
+      window.removeEventListener("click", resumeOnFirstInteraction);
+      window.removeEventListener("keydown", resumeOnFirstInteraction);
+      window.removeEventListener("touchstart", resumeOnFirstInteraction);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = muted ? 0 : volume;
@@ -194,6 +230,7 @@ export default function MusicPlayer() {
   }, [trackIndex]);
 
   function nextTrack() {
+    setUserControlled(true);
     if (shuffle) {
       let next = trackIndex;
       while (next === trackIndex && PLAYLIST.length > 1) {
@@ -207,16 +244,30 @@ export default function MusicPlayer() {
   }
 
   function prevTrack() {
+    setUserControlled(true);
     setTrackIndex((i) => (i - 1 + PLAYLIST.length) % PLAYLIST.length);
     setIsPlaying(true);
+  }
+
+  function togglePlayPause() {
+    setUserControlled(true);
+    setIsPlaying((p) => !p);
   }
 
   function handleEnded() {
     if (repeat) {
       audioRef.current.currentTime = 0;
       audioRef.current.play();
-    } else {
+    } else if (userControlled) {
+      // The visitor has driven playback at some point — normal
+      // auto-advance applies, regardless of which of the 3 tracks this is.
       nextTrack();
+    } else {
+      // Still the original system-started autoplay, untouched by the
+      // visitor — just stop. Advancing on its own would be the site
+      // deciding what plays next, which is the visitor's call once
+      // they've engaged with the player at all.
+      setIsPlaying(false);
     }
   }
 
@@ -276,7 +327,7 @@ export default function MusicPlayer() {
           faded by proximity to the active line, crossfading as the
           active line changes. Visible only while actually playing. */}
       <AnimatePresence>
-        {isPlaying && (
+        {isPlaying && revealed && (
           <motion.aside
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
@@ -423,7 +474,7 @@ export default function MusicPlayer() {
                   <SkipBack size={20} />
                 </button>
                 <button
-                  onClick={() => setIsPlaying((p) => !p)}
+                  onClick={togglePlayPause}
                   aria-label={isPlaying ? "Pausar" : "Tocar"}
                   className="flex h-11 w-11 items-center justify-center rounded-full bg-signal text-ink shadow-lg transition-transform hover:scale-105 active:scale-95"
                 >
@@ -450,11 +501,14 @@ export default function MusicPlayer() {
       </AnimatePresence>
 
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          setOpen((o) => !o);
+          setRevealed(true);
+        }}
         aria-label="Abrir player de música"
         aria-expanded={open}
         className={`flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border transition-colors ${
-          isPlaying
+          isPlaying && revealed
             ? "border-signal bg-signal/10 text-signal"
             : "border-hair text-mist hover:text-paper"
         }`}
