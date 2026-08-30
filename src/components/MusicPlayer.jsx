@@ -106,7 +106,7 @@ export default function MusicPlayer() {
   const [repeat, setRepeat] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [volume, setVolume] = useState(0.3);
+  const [volume, setVolume] = useState(0.7);
   const [muted, setMuted] = useState(false);
   const [coverFailed, setCoverFailed] = useState(false);
   const [lyricsByTrack, setLyricsByTrack] = useState({});
@@ -163,6 +163,7 @@ export default function MusicPlayer() {
 
     function tryStart() {
       if (started) return;
+      audio.volume = muted ? 0 : volume;
       audio
         .play()
         .then(() => {
