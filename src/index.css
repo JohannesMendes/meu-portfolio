@@ -9,24 +9,18 @@
   --color-ink: #0a0a0a;
   --color-panel: #121212;
   --color-panel-soft: #161616;
+  --color-surface: #1a1a1a;
   --color-paper: #f6f5f2;
   --color-signal: #ff3b30;
   --color-signal-dim: #7a1a15;
   --color-mist: #a3a3a3;
   --color-hair: rgba(255, 255, 255, 0.09);
+  --color-glow: rgba(255, 59, 48, 0.18);
 }
 
 html {
   overflow-x: hidden;
   width: 100%;
-  /* Intentionally NOT scroll-behavior: smooth here. The Hero section
-     drives its own scroll-linked animation (video card expansion) off
-     the browser's native scroll position; CSS smooth-scrolling
-     interpolates every scroll input on top of that, which is what
-     caused the "stutters / has to scroll up then down again" feeling
-     on mobile. In-page anchor links get their smooth scroll from JS
-     (see the click handler in Home.jsx) instead, so navigation still
-     feels smooth without fighting the pinned Hero. */
   scroll-behavior: auto;
 }
 
@@ -49,6 +43,9 @@ img, svg, video, canvas {
   color: #0a0a0a;
 }
 
+/* ─────────────────────────────────────────────
+   Grid texture (Hero background)
+───────────────────────────────────────────── */
 .grid-texture {
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
@@ -56,6 +53,9 @@ img, svg, video, canvas {
   background-size: 42px 42px;
 }
 
+/* ─────────────────────────────────────────────
+   Marquees
+───────────────────────────────────────────── */
 .marquee-track {
   display: flex;
   width: max-content;
@@ -74,16 +74,27 @@ img, svg, video, canvas {
   to { transform: translateX(-50%); }
 }
 
+/* ─────────────────────────────────────────────
+   Reveal animation — entra com blur + lift
+───────────────────────────────────────────── */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1);
+  filter: blur(4px);
+  transition:
+    opacity 0.75s cubic-bezier(.16,1,.3,1),
+    transform 0.75s cubic-bezier(.16,1,.3,1),
+    filter 0.75s cubic-bezier(.16,1,.3,1);
 }
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+  filter: blur(0);
 }
 
+/* ─────────────────────────────────────────────
+   Caret (blinking cursor)
+───────────────────────────────────────────── */
 .caret {
   display: inline-block;
   width: 0.55ch;
@@ -95,14 +106,89 @@ img, svg, video, canvas {
   50% { opacity: 0; }
 }
 
+/* ─────────────────────────────────────────────
+   Scroll indicator bounce
+───────────────────────────────────────────── */
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
+.animate-bounce-subtle {
+  animation: bounce-subtle 1.8s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Signal glow pulse (disponível badge)
+───────────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5); }
+  50%       { opacity: 0.7; box-shadow: 0 0 0 5px rgba(74, 222, 128, 0); }
+}
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Shimmer button (WhatsApp CTA)
+───────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(250%) skewX(-12deg); }
+}
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.22) 40%,
+    rgba(255, 255, 255, 0.22) 60%,
+    transparent 100%
+  );
+  width: 40%;
+  transform: translateX(-100%) skewX(-12deg);
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Gradient text utility
+───────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-paper) 0%, var(--color-mist) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─────────────────────────────────────────────
+   Signal glow — caixa com brilho vermelho
+───────────────────────────────────────────── */
+.glow-signal {
+  box-shadow: 0 0 0 1px rgba(255,59,48,0.25), 0 0 24px rgba(255,59,48,0.15);
+}
+
+/* ─────────────────────────────────────────────
+   Reduced motion
+───────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .marquee-track { animation: none; }
   .testimonials-marquee-track { animation: none; }
-  .reveal { transition: none; opacity: 1; transform: none; }
+  .reveal { transition: none; opacity: 1; transform: none; filter: none; }
   .caret { animation: none; }
+  .animate-bounce-subtle { animation: none; }
+  .pulse-dot { animation: none; }
+  .btn-shimmer::after { animation: none; }
 }
 
+/* ─────────────────────────────────────────────
+   Focus visible (acessibilidade)
+───────────────────────────────────────────── */
 a:focus-visible, button:focus-visible {
   outline: 2px solid var(--color-signal);
   outline-offset: 3px;

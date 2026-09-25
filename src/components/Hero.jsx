@@ -178,7 +178,6 @@ export default function Hero() {
           style={{ opacity: 0.4 * (1 - progress) }}
         />
 
-        {/* z-20: hero copy */}
         <motion.div
           className="relative z-20 mx-auto flex w-full max-w-4xl flex-col"
           style={{ opacity: contentOpacity, y: -contentShift }}
@@ -196,31 +195,36 @@ export default function Hero() {
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-9 sm:gap-4">
+            {/* Botão primário — identidade signal */}
             <a
               href="#projetos"
               onClick={(e) => smoothScrollTo(e, "#projetos")}
-              className="inline-flex items-center justify-center rounded-full bg-paper px-7 py-3.5 text-sm font-semibold text-ink transition-transform hover:-translate-y-0.5 sm:text-base"
+              className="inline-flex items-center justify-center rounded-full bg-signal px-7 py-3.5 text-sm font-semibold text-ink transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(255,59,48,0.45)] btn-shimmer sm:text-base"
             >
               Ver Portfólio
             </a>
+
+            {/* Botão secundário — mais contrastado */}
             <a
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/5 px-7 py-3.5 text-sm font-medium text-paper backdrop-blur-sm transition-colors hover:border-white/60 hover:bg-white/15 sm:text-base"
+              className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/10 px-7 py-3.5 text-sm font-medium text-paper backdrop-blur-sm transition-all duration-200 hover:border-white/70 hover:bg-white/20 hover:-translate-y-0.5 sm:text-base"
             >
               Iniciar Parceria
             </a>
           </div>
         </motion.div>
 
+        {/* Scroll indicator com bounce */}
         <motion.a
           href="#servicos"
           onClick={(e) => smoothScrollTo(e, "#servicos")}
-          className="pointer-events-auto relative z-20 mx-auto mt-14 font-mono text-xs uppercase tracking-widest text-white/50 hover:text-white/80 transition-colors sm:mt-16"
+          className="pointer-events-auto relative z-20 mx-auto mt-14 flex flex-col items-center gap-2 font-mono text-xs uppercase tracking-widest text-white/50 hover:text-white/80 transition-colors sm:mt-16"
           style={{ opacity: contentOpacity }}
         >
-          ↓ Rolar para explorar
+          <span className="animate-bounce-subtle">↓</span>
+          <span>Rolar para explorar</span>
         </motion.a>
       </section>
     </div>

@@ -20,40 +20,41 @@ function TestimonialCard({ testimonial }) {
     : 5;
 
   return (
-    <blockquote className="mx-3 flex h-full w-[320px] shrink-0 flex-col rounded-2xl border border-hair bg-panel p-7 sm:w-[360px]">
+    <blockquote className="mx-3 flex h-full w-[320px] shrink-0 flex-col rounded-2xl border border-hair bg-panel p-7 shadow-[0_4px_20px_rgba(0,0,0,0.3)] transition-all duration-300 hover:border-signal/30 hover:shadow-[0_8px_32px_rgba(255,59,48,0.1)] hover:-translate-y-1 sm:w-[360px]">
       <div className="mb-4 flex items-center gap-3">
         {testimonial.photo ? (
           <img
             src={testimonial.photo}
             alt={testimonial.author}
-            className="h-10 w-10 shrink-0 rounded-full object-cover"
+            className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-signal/30 ring-offset-1 ring-offset-panel"
           />
         ) : (
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 font-display text-sm font-bold text-paper">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-signal/15 ring-2 ring-signal/30 ring-offset-1 ring-offset-panel font-display text-sm font-bold text-signal">
             {initials(testimonial.author)}
           </span>
         )}
         <div className="min-w-0">
-          <p className="truncate font-medium text-paper">{testimonial.author}</p>
+          <p className="truncate font-semibold text-paper">{testimonial.author}</p>
           {testimonial.role ? (
             <p className="truncate text-sm text-mist">{testimonial.role}</p>
           ) : null}
         </div>
       </div>
 
-      <p className="flex-1 text-base leading-relaxed text-white/85">
-        "{testimonial.quote}"
-      </p>
-
-      <div className="mt-4 flex gap-1">
+      {/* Stars */}
+      <div className="mb-4 flex gap-1">
         {Array.from({ length: rating }).map((_, i) => (
           <Star
             key={i}
-            size={16}
+            size={14}
             style={{ fill: "var(--color-signal)", color: "var(--color-signal)" }}
           />
         ))}
       </div>
+
+      <p className="flex-1 text-base leading-relaxed text-white/85">
+        "{testimonial.quote}"
+      </p>
     </blockquote>
   );
 }
@@ -121,7 +122,10 @@ export default function Testimonials() {
         </h2>
         <p data-reveal className="reveal mt-3 text-sm text-mist">
           Já trabalhou comigo?{" "}
-          <Link to="/enviar-depoimento" className="text-paper underline underline-offset-4 hover:text-signal">
+          <Link
+            to="/enviar-depoimento"
+            className="font-medium text-paper underline underline-offset-4 transition-colors hover:text-signal"
+          >
             Deixe seu depoimento aqui
           </Link>
           .
@@ -133,7 +137,7 @@ export default function Testimonials() {
           data-reveal
           className="reveal group mt-12 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]"
         >
-          <div className="testimonials-marquee-track flex w-max py-1 group-hover:[animation-play-state:paused]">
+          <div className="testimonials-marquee-track flex w-max py-2 group-hover:[animation-play-state:paused]">
             {loopSet.map((t, i) => (
               <TestimonialCard key={`${t.id}-${i}`} testimonial={t} />
             ))}
