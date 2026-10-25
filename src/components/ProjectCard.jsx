@@ -22,7 +22,7 @@ export default function ProjectCard({ project, className = "", ...rest }) {
         {/* Overlay escuro com CTA centralizado — aparece no hover */}
         <div className="absolute inset-0 flex items-center justify-center bg-ink/70 opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100">
           <span className="flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 py-2.5 font-mono text-sm font-semibold text-paper backdrop-blur-sm">
-            Acessar Site
+            {project.linkLabel || "Acessar Site"}
             <ArrowUpRight size={15} />
           </span>
         </div>
@@ -47,7 +47,7 @@ export default function ProjectCard({ project, className = "", ...rest }) {
 
         {/* CTA texto no bottom */}
         <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-signal transition-all duration-200 group-hover:gap-2.5">
-          Acessar Site
+          {project.linkLabel || "Acessar Site"}
           <ArrowUpRight size={16} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </span>
       </div>

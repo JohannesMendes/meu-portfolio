@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#16a34a"/><stop offset="100%" stop-color="#065f46"/>
+</linearGradient>
+</defs>
+<rect width="800" height="500" fill="#101312"/>
+<rect width="800" height="500" fill="url(#g)" opacity="0.45"/>
+<circle cx="400" cy="190" r="62" fill="none" stroke="#ffffff" stroke-width="8" opacity="0.9"/>
+<circle cx="400" cy="190" r="34" fill="#ffffff" opacity="0.9"/>
+<path d="M330 120 v-30 h30 M470 120 v-30 h-30 M330 260 v30 h30 M470 260 v30 h-30" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<text x="400" y="372" font-family="Arial, sans-serif" font-size="56" font-weight="bold" fill="#ffffff" text-anchor="middle">NutriSnap</text>
+<text x="400" y="416" font-family="Arial, sans-serif" font-size="22" fill="#c9f0d6" text-anchor="middle">Scanner de prato com IA</text>
+</svg>
