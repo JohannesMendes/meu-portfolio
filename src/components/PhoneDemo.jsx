@@ -28,7 +28,24 @@ const BLUE = "#5DB8F0";
 const GREY = "#9A9CA5";
 
 const TYPED_TEXT = "3 ovos mexidos e 2 fatias de pão de forma";
-const TABS = ["Hoje", "Foto (IA)", "Texto (IA)", "Metas"];
+const SCREENS = 4;
+
+// Legendas que aparecem embaixo do celular, uma por momento do loop
+const CAP = {
+  home: "Tela inicial: o resumo do dia mostra quantas calorias você já consumiu e quantas ainda faltam.",
+  water: "Registrar água é um toque: o copo entra na conta e a barra enche.",
+  photo: "Scanner de prato: tire uma foto e a IA identifica o que está no prato.",
+  analyzing: "A IA (Gemini) reconhece cada alimento e estima o peso e os macros.",
+  review: "Você confere e corrige tudo antes de salvar, porque a IA pode errar.",
+  save: "Tudo certo? Um toque e a refeição vai para o diário.",
+  text: "Sem foto? Escreva (ou fale) o que comeu, do jeito que você falaria.",
+  interpret: "A IA entende quantidades e medidas caseiras e monta a lista com calorias e macros.",
+  textDone: "Pronto: o total da refeição já está calculado, é só confirmar e salvar.",
+  goals: "Metas sob medida: calorias, proteína, carboidrato, gordura e água para o seu objetivo.",
+};
+// legenda de cada tela quando o loop pausa (tela "completa")
+const SETTLED = [CAP.water, CAP.review, CAP.textDone, CAP.goals];
+const START_CAP = [CAP.home, CAP.photo, CAP.text, CAP.goals];
 
 // [nome, g, kcal, P, C, G] — valores de exemplo
 const PLATE = [
@@ -122,7 +139,7 @@ function Review({ items }) {
           <Cell v={`${Math.round(total(1))}g`} l="peso" />
         </div>
       </div>
-      <div className="ph-el">Confirmar e salvar no diário</div>
+      <div className="ph-el" data-tap="confirm">Confirmar e salvar no diário</div>
       <div style={{ height: 12 }} />
     </>
   );
@@ -156,25 +173,37 @@ function glide(el, dur, rafRef) {
 
 /* ---------- componente principal ---------- */
 
-export default function PhoneDemo() {
+export default function PhoneDemo({ onInfo }) {
   const reduced = useMemo(
     () => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
     [],
   );
   const [screen, setScreen] = useState(0);
-  const [phase, setPhase] = useState(0);
+  const [phase, setPhase] = useState(0); // 0 parado · 1 carregando · 2 resultado
   const [typed, setTyped] = useState(0);
   const [water, setWater] = useState(1000);
+  const [cap, setCap] = useState(CAP.home);
+  const [cursor, setCursor] = useState({ x: 210, y: 470, show: false });
+  const [tapKey, setTapKey] = useState(0);
   const [paused, setPaused] = useState(!!reduced);
   const [visible, setVisible] = useState(false);
 
   const wrapRef = useRef(null);
+  const screenRef = useRef(null);
   const bodyRef = useRef(null);
   const rafRef = useRef(0);
+  const timers = useRef([]);
   const resumeRef = useRef(0);
+  const curRef = useRef(0);
   const foodSvg = useMemo(() => buildFoodSvg(), []);
 
   const running = visible && !paused;
+
+  const clearTimers = useCallback(() => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    cancelAnimationFrame(rafRef.current);
+  }, []);
 
   // só anima quando o celular está na tela
   useEffect(() => {
@@ -188,98 +217,159 @@ export default function PhoneDemo() {
     return () => io.disconnect();
   }, []);
 
-  useEffect(() => () => {
-    cancelAnimationFrame(rafRef.current);
-    clearTimeout(resumeRef.current);
-  }, []);
+  useEffect(() => () => clearTimeout(resumeRef.current), []);
 
   // volta ao topo ao trocar de tela
   useEffect(() => {
     if (bodyRef.current) bodyRef.current.scrollTop = 0;
   }, [screen]);
 
-  const go = useCallback((n, settle) => {
-    setScreen(n);
-    setPhase(settle ? (n === 1 ? 1 : n === 2 ? 2 : 0) : 0);
-    setTyped(settle && n === 2 ? TYPED_TEXT.length : 0);
+  // posiciona o cursor em cima de um elemento da tela do app
+  const moveTo = useCallback((name) => {
+    const scr = screenRef.current;
+    const el = scr?.querySelector(`[data-tap="${name}"]`);
+    if (!scr || !el) return;
+    const sr = scr.getBoundingClientRect();
+    const er = el.getBoundingClientRect();
+    const k = sr.width / scr.offsetWidth || 1; // compensa o zoom da seção
+    setCursor({ x: (er.left - sr.left + er.width * 0.55) / k, y: (er.top - sr.top + er.height * 0.55) / k, show: true });
   }, []);
+  const hideCursor = useCallback(() => setCursor((c) => ({ ...c, show: false })), []);
+  const tap = useCallback(() => setTapKey((k) => k + 1), []);
 
-  // sequência automática (o "vídeo" em loop)
-  useEffect(() => {
-    if (!running) return undefined;
-    const next = () => go((screen + 1) % TABS.length);
-    let t;
-    if (screen === 0) {
-      if (phase === 0)
-        t = setTimeout(() => {
-          setWater((w) => Math.min(2500, w + 300));
+  // o "vídeo" em loop: uma linha do tempo por tela
+  const play = useCallback(
+    (i) => {
+      clearTimers();
+      curRef.current = i;
+      setScreen(i);
+      setPhase(0);
+      setTyped(0);
+      setCap(START_CAP[i]);
+      hideCursor();
+      const at = (ms, fn) => timers.current.push(setTimeout(fn, ms));
+      const next = (i + 1) % SCREENS;
+      const glide3 = (ms) => glide(bodyRef.current, ms, rafRef);
+
+      if (i === 0) {
+        at(2200, () => {
+          moveTo("water300");
+          setCap(CAP.water);
+        });
+        at(3400, () => {
+          tap();
           setPhase(1);
-        }, 2800);
-      else t = setTimeout(next, 3200);
-    } else if (screen === 1) {
-      if (phase === 0) t = setTimeout(() => setPhase(1), 2800);
-      else if (phase === 1)
-        t = setTimeout(() => {
-          glide(bodyRef.current, 3600, rafRef);
+          setWater((w) => Math.min(2500, w + 300));
+        });
+        at(6800, hideCursor);
+        at(7400, () => play(next));
+      } else if (i === 1) {
+        at(1800, () => moveTo("retake"));
+        at(2900, () => {
+          tap();
+          setPhase(1);
+          setCap(CAP.analyzing);
+        });
+        at(5700, () => {
           setPhase(2);
-        }, 1200);
-      else t = setTimeout(next, 5200);
-    } else if (screen === 2) {
-      if (phase === 0) {
-        if (typed < TYPED_TEXT.length) t = setTimeout(() => setTyped((x) => x + 1), 75);
-        else t = setTimeout(() => setPhase(1), 500);
-      } else if (phase === 1) t = setTimeout(() => setPhase(2), 2000);
-      else if (phase === 2)
-        t = setTimeout(() => {
-          glide(bodyRef.current, 3000, rafRef);
-          setPhase(3);
-        }, 1200);
-      else t = setTimeout(next, 4600);
-    } else {
-      t = setTimeout(next, 5200);
-    }
-    return () => clearTimeout(t);
-  }, [running, screen, phase, typed, go]);
+          setCap(CAP.review);
+          hideCursor();
+        });
+        at(7400, () => glide3(3800));
+        at(11600, () => {
+          moveTo("confirm");
+          setCap(CAP.save);
+        });
+        at(12800, tap);
+        at(14200, () => play(next));
+      } else if (i === 2) {
+        at(1600, () => moveTo("field"));
+        at(2600, tap);
+        for (let k = 1; k <= TYPED_TEXT.length; k++) at(2900 + k * 75, () => setTyped(k));
+        const end = 2900 + TYPED_TEXT.length * 75;
+        at(end + 500, () => {
+          moveTo("interpret");
+          setCap(CAP.interpret);
+        });
+        at(end + 1700, () => {
+          tap();
+          setPhase(1);
+        });
+        at(end + 3700, () => {
+          setPhase(2);
+          setCap(CAP.textDone);
+          hideCursor();
+        });
+        at(end + 5200, () => glide3(3000));
+        at(end + 9800, () => play(next));
+      } else {
+        at(2600, () => moveTo("continue"));
+        at(3700, tap);
+        at(4700, hideCursor);
+        at(5300, () => play(next));
+      }
+    },
+    [clearTimers, hideCursor, moveTo, tap],
+  );
 
-  // pausa quando a pessoa mexe; retoma sozinho depois
+  // liga/desliga o loop conforme a seção está visível e não pausada
+  useEffect(() => {
+    if (running) play(curRef.current);
+    else clearTimers();
+    return clearTimers;
+  }, [running, play, clearTimers]);
+
+  // deixa a tela "completa" (sem ficar presa no carregando)
+  const settle = useCallback(
+    (i) => {
+      clearTimers();
+      curRef.current = i;
+      setScreen(i);
+      setPhase(i === 1 || i === 2 ? 2 : 0);
+      setTyped(i === 2 ? TYPED_TEXT.length : 0);
+      setCap(SETTLED[i]);
+      hideCursor();
+    },
+    [clearTimers, hideCursor],
+  );
+
   const pause = useCallback(() => {
     clearTimeout(resumeRef.current);
-    cancelAnimationFrame(rafRef.current);
+    if (paused) return;
     setPaused(true);
-    // deixa a tela "pronta" (sem ficar presa no carregando)
-    setPhase((p) => (screen === 1 ? Math.max(p, 1) : screen === 2 ? Math.max(p, 2) : p));
-    if (screen === 2) setTyped(TYPED_TEXT.length);
-  }, [screen]);
+    settle(curRef.current);
+  }, [paused, settle]);
 
   const resumeIn = useCallback(
     (ms) => {
       if (reduced) return;
       clearTimeout(resumeRef.current);
       resumeRef.current = setTimeout(() => {
-        go((screen + 1) % TABS.length);
+        curRef.current = (curRef.current + 1) % SCREENS;
         setPaused(false);
       }, ms);
     },
-    [go, reduced, screen],
+    [reduced],
   );
 
-  const addWater = (ml) => setWater((w) => Math.min(2500, w + ml));
-
-  const pickTab = (n) => {
+  const pickDot = (n) => {
     clearTimeout(resumeRef.current);
-    cancelAnimationFrame(rafRef.current);
     setPaused(true);
-    go(n, true);
-    if (!reduced) {
-      resumeRef.current = setTimeout(() => {
-        go((n + 1) % TABS.length);
-        setPaused(false);
-      }, 10000);
-    }
+    settle(n);
+    resumeIn(10000);
   };
 
-  const showSpinner1 = screen === 1 && phase === 0;
-  const textDone = screen === 2 && phase >= 2;
+  const pickRef = useRef(pickDot);
+  pickRef.current = pickDot;
+  const pick = useCallback((n) => pickRef.current(n), []);
+
+  // avisa a seção (para mostrar a legenda ao lado do celular)
+  useEffect(() => {
+    onInfo?.({ screen, cap, pick });
+  }, [screen, cap, pick, onInfo]);
+
+  const addWater = (ml) => setWater((w) => Math.min(2500, w + ml));
+  const textDone = screen === 2 && phase === 2;
 
   return (
     <div ref={wrapRef}>
@@ -291,16 +381,13 @@ export default function PhoneDemo() {
         onPointerLeave={(e) => e.pointerType === "mouse" && resumeIn(1500)}
         onTouchStart={pause}
         onTouchEnd={() => resumeIn(8000)}
-        onWheel={() => {
-          clearTimeout(resumeRef.current);
-        }}
       >
         <div className="ph-shadow" />
         <span className="ph-btn" style={{ top: 128, height: 64 }} />
         <span className="ph-btn" style={{ top: 214, height: 40 }} />
         <div className="ph-frame">
           <div className="ph-bezel">
-            <div className="ph-screen">
+            <div className="ph-screen" ref={screenRef}>
               <div className="ph-app">
                 <div className="ph-status">
                   <span>9:41</span>
@@ -346,6 +433,7 @@ export default function PhoneDemo() {
                           </button>
                           <button
                             type="button"
+                            data-tap="water300"
                             key={`w300-${phase === 1 ? water : "x"}`}
                             className={`ph-wb${phase === 1 ? " tap" : ""}`}
                             onClick={() => addWater(300)}
@@ -378,13 +466,12 @@ export default function PhoneDemo() {
                     <Bar title="Scanner de prato (IA)" back />
                     <div className="ph-bd" ref={bodyRef}>
                       <div className="ph-photo" dangerouslySetInnerHTML={{ __html: foodSvg }} />
-                      <div className="ph-el" style={{ margin: "16px 0 4px" }}>
+                      <div className="ph-el" data-tap="retake" style={{ margin: "16px 0 4px" }}>
                         <Camera size={22} />
                         Tirar outra foto
                       </div>
-                      {showSpinner1 ? (
-                        <Spinner text="Analisando o prato..." />
-                      ) : (
+                      {phase === 1 && <Spinner text="Analisando o prato..." />}
+                      {phase === 2 && (
                         <>
                           <div style={{ height: 16 }} />
                           <Review items={PLATE} />
@@ -398,14 +485,15 @@ export default function PhoneDemo() {
                   <>
                     <Bar title="Adicionar por texto (IA)" back />
                     <div className="ph-bd" ref={bodyRef}>
-                      <div style={{ background: "#24262E", borderRadius: 14, padding: 16, fontSize: 16, display: "flex", alignItems: "flex-start", gap: 8, minHeight: 24 }}>
-                        <div style={{ flex: 1, lineHeight: 1.4 }}>
+                      <div data-tap="field" style={{ background: "#24262E", borderRadius: 14, padding: 16, fontSize: 16, display: "flex", alignItems: "flex-start", gap: 8, minHeight: 24 }}>
+                        <div style={{ flex: 1, lineHeight: 1.4, minHeight: 22 }}>
+                          {typed === 0 && phase === 0 && <span style={{ color: "#6f717a" }}>Ex: "4 fatias de pão de forma"</span>}
                           {TYPED_TEXT.slice(0, typed)}
-                          {!textDone && <span className="ph-caret">|</span>}
+                          {!textDone && typed > 0 && <span className="ph-caret">|</span>}
                         </div>
                         <Mic size={24} color={GREEN} />
                       </div>
-                      <div className="ph-el" style={{ marginTop: 12 }}>
+                      <div className="ph-el" data-tap="interpret" style={{ marginTop: 12 }}>
                         <Sparkles size={22} />
                         {textDone ? "Interpretar novamente" : "Interpretar com IA"}
                       </div>
@@ -433,13 +521,28 @@ export default function PhoneDemo() {
                         <MacroRow label="Gorduras" value="67 g" color={RED} />
                         <MacroRow label="Água" value="2500 ml" color={BLUE} />
                       </div>
-                      <div className="ph-el">Continuar</div>
+                      <div className="ph-el" data-tap="continue">Continuar</div>
                     </div>
                   </>
                 )}
 
                 <div className="ph-gesture"><i /></div>
               </div>
+
+              {/* seta do mouse + marcador de toque */}
+              {tapKey > 0 && (
+                <span key={tapKey} className="ph-ripple" style={{ left: cursor.x - 22, top: cursor.y - 22 }} />
+              )}
+              <span
+                className="ph-cursor"
+                aria-hidden="true"
+                style={{ transform: `translate(${cursor.x}px, ${cursor.y}px)`, opacity: cursor.show ? 1 : 0 }}
+              >
+                <svg width="26" height="30" viewBox="0 0 26 30">
+                  <path d="M3 2 L3 22 L8.2 17.4 L11.8 25.6 L15.2 24.1 L11.7 16.1 L18.6 15.6 Z" fill="#fff" stroke="#111" strokeWidth="1.8" strokeLinejoin="round" />
+                </svg>
+              </span>
+
               <span className="ph-cam" />
               <span className="ph-glass" />
             </div>
@@ -447,12 +550,28 @@ export default function PhoneDemo() {
         </div>
       </div>
 
-      <div className="ph-tabs" role="tablist" aria-label="Telas do aplicativo">
-        {TABS.map((name, i) => (
-          <button key={name} type="button" role="tab" aria-selected={screen === i} className={`ph-tab${screen === i ? " on" : ""}`} onClick={() => pickTab(i)}>
-            <i />
-            {name}
-          </button>
+    </div>
+  );
+}
+
+/* Legenda do loop: fica ao lado do celular no computador e embaixo dele no celular */
+export function PhoneCaption({ info, className = "" }) {
+  const { screen = 0, cap = "", pick } = info || {};
+  return (
+    <div className={`ph-cap ${className}`}>
+      <span className="ph-cap-step">
+        PASSO {String(screen + 1).padStart(2, "0")} / {String(SCREENS).padStart(2, "0")}
+      </span>
+      <p key={cap} className="ph-cap-text">{cap}</p>
+      <div className="ph-dots">
+        {Array.from({ length: SCREENS }).map((_, n) => (
+          <button
+            key={n}
+            type="button"
+            aria-label={`Ver a tela ${n + 1} de ${SCREENS}`}
+            className={`ph-dot${screen === n ? " on" : ""}`}
+            onClick={() => pick?.(n)}
+          />
         ))}
       </div>
       <p className="ph-hint">Passe o mouse ou toque no celular para pausar e testar. Valores de exemplo.</p>

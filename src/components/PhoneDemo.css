@@ -271,59 +271,105 @@
   }
 }
 
-/* ---------- seletor de telas embaixo do celular ---------- */
-.ph-tabs {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 34px;
+/* ---------- cursor, toque e legendas ---------- */
+.ph-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  pointer-events: none;
+  margin: -3px 0 0 -3px;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55));
+  transition: transform 0.95s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
 }
-.ph-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  background: transparent;
-  color: #a3a3a3;
-  border-radius: 999px;
-  padding: 7px 14px;
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 12px;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
-}
-.ph-tab:hover {
-  color: #f6f5f2;
-}
-.ph-tab.on {
-  color: #f6f5f2;
-  border-color: rgba(255, 59, 48, 0.5);
-  background: rgba(255, 59, 48, 0.1);
-}
-.ph-tab i {
-  width: 6px;
-  height: 6px;
+.ph-ripple {
+  position: absolute;
+  z-index: 5;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: currentColor;
-  opacity: 0.6;
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid #fff;
+  pointer-events: none;
+  animation: ph-ripple 0.8s ease-out forwards;
 }
-.ph-tab.on i {
+.ph-cap {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 460px;
+  min-height: 176px;
+  padding: 20px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  background: #121212;
+}
+.ph-cap-step {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: #ff3b30;
+}
+.ph-cap-text {
+  margin: 10px 0 0;
+  min-height: 52px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #f6f5f2;
+  animation: ph-fade 0.5s ease-out;
+}
+.ph-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 14px;
+}
+.ph-dot {
+  width: 22px;
+  height: 4px;
+  border: 0;
+  padding: 0;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.ph-dot.on {
   background: #ff3b30;
-  opacity: 1;
 }
 .ph-hint {
-  margin-top: 14px;
-  text-align: center;
+  margin: 12px 0 0;
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 11px;
   color: #6f6f6f;
+}
+@keyframes ph-ripple {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+@keyframes ph-fade {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ph-spin svg,
   .ph-caret,
-  .ph-wb.tap {
+  .ph-wb.tap,
+  .ph-cap-text {
     animation: none;
+  }
+  .ph-cursor {
+    transition: none;
   }
 }

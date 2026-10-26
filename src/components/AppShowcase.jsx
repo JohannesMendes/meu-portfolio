@@ -1,32 +1,34 @@
+import { useState } from "react";
 import { ArrowUpRight, Camera, Droplets, Sparkles, Target } from "lucide-react";
-import PhoneDemo from "./PhoneDemo";
+import PhoneDemo, { PhoneCaption } from "./PhoneDemo";
 
 const FEATURES = [
   {
     icon: Camera,
     title: "Scanner de prato",
-    text: "Tire uma foto e a IA identifica os alimentos, estima o peso e calcula calorias e macros.",
+    text: "Foto do prato vira calorias e macros.",
   },
   {
     icon: Sparkles,
     title: "Por texto ou voz",
-    text: "Escreva ou fale o que comeu, como “3 ovos mexidos e 2 fatias de pão”, e a IA interpreta.",
+    text: "Escreva ou fale o que comeu.",
   },
   {
     icon: Target,
     title: "Metas sob medida",
-    text: "Calorias, proteína, carboidrato, gordura e água calculados para o seu objetivo.",
+    text: "Calorias, macros e água para o seu objetivo.",
   },
   {
     icon: Droplets,
     title: "Diário e água",
-    text: "Registre as refeições do dia, acompanhe a água e veja quanto falta para a meta.",
+    text: "Refeições e água do dia, com o que falta para a meta.",
   },
 ];
 
 const TAGS = ["Flutter", "IA Gemini", "Firebase"];
 
 export default function AppShowcase() {
+  const [info, setInfo] = useState(null);
   return (
     <section id="nutrisnap" className="relative overflow-hidden px-5 py-24 sm:px-8 sm:py-32 lg:px-16">
       <div
@@ -52,16 +54,19 @@ export default function AppShowcase() {
             App de nutrição que transforma a foto do prato (ou uma frase) em calorias e macros. Feito em Flutter, com IA
             Gemini, e pensado para quem quer registrar a alimentação sem pesar tudo na balança.
           </p>
+          <div data-reveal className="reveal mt-8 hidden lg:block">
+            <PhoneCaption info={info} />
+          </div>
         </div>
 
         <div className="order-3 lg:order-none lg:col-start-1 lg:row-start-2 lg:-mt-6 lg:self-start">
           <div data-reveal className="reveal grid gap-px overflow-hidden rounded-2xl border border-hair bg-hair sm:grid-cols-2">
             {FEATURES.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="bg-ink p-6 transition-colors duration-300 hover:bg-panel">
+              <div key={title} className="bg-ink p-5 transition-colors duration-300 hover:bg-panel">
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-signal/20 bg-signal/10 text-signal">
                   <Icon size={18} />
                 </span>
-                <h3 className="mt-4 font-display text-base font-bold text-paper">{title}</h3>
+                <h3 className="mt-3 font-display text-base font-bold text-paper">{title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-mist">{text}</p>
               </div>
             ))}
@@ -89,8 +94,11 @@ export default function AppShowcase() {
         </div>
 
         <div data-reveal className="reveal order-2 flex justify-center lg:order-none lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:items-center lg:justify-end lg:pr-6">
-          <div className="origin-top lg:scale-[1.08]">
-            <PhoneDemo />
+          <div className="flex flex-col items-center gap-8">
+            <div className="origin-top lg:scale-[1.04]">
+              <PhoneDemo onInfo={setInfo} />
+            </div>
+            <PhoneCaption info={info} className="lg:hidden" />
           </div>
         </div>
       </div>
