@@ -142,8 +142,8 @@ export const PROJECTS = [
     title: "NutriSnap",
     description:
       "App de nutrição que identifica os alimentos do prato por foto ou texto com IA e calcula calorias e macros automaticamente.",
-    image: "/projects/nutrisnap.svg",
-    imageAlt: "Capa do app NutriSnap — Scanner de prato com IA",
+    image: "/projects/nutrisnap.png",
+    imageAlt: "Logo do app NutriSnap, com garfo e colher dentro de um círculo",
     link: "https://github.com/JohannesMendes/NutriSnap",
     linkLabel: "Ver no GitHub",
     tags: ["Flutter", "IA Gemini", "Firebase"],
