@@ -24,6 +24,7 @@ html {
   scroll-behavior: auto;
 }
 
+
 body {
   overflow-x: hidden;
   width: 100%;
@@ -31,6 +32,16 @@ body {
   color: var(--color-paper);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+}
+
+/* `overflow-x: hidden` turns html/body into scroll containers, which breaks
+   `position: sticky` (the Hero's pinned video zoom). `clip` cuts off the
+   horizontal overflow the same way WITHOUT creating a scroll container. */
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
 }
 
 img, svg, video, canvas {

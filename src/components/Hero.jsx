@@ -36,8 +36,14 @@ function smoothScrollTo(e, hash) {
  * so resize now only triggers a recompute when the width actually
  * changes (real orientation/layout change).
  *
+ * Portrait: a studio photo sits BEHIND the video card (same z-0 layer,
+ * earlier in the DOM so it paints underneath). While the card is still a
+ * small rounded box the person is visible around/above it; as the card
+ * expands it covers the portrait, which also drifts up and fades so the
+ * hand-off to the full-bleed video is clean.
+ *
  * Z-index map (all within this section's own stacking context):
- *   z-0  -> video card (grows from a small rounded box to full-bleed)
+ *   z-0  -> portrait, then video card (grows from a small box to full-bleed)
  *   z-10 -> gradient overlay + grid texture
  *   z-20 -> hero copy (badge, heading, paragraph, buttons, terminal card)
  */
@@ -126,6 +132,14 @@ export default function Hero() {
   const videoHeight = startHeightVh + progress * (100 - startHeightVh);
   const videoRadius = 28 * (1 - progress);
 
+  // Portrait behind the card: drifts up slightly and fades as the video
+  // takes over the whole screen.
+  const portraitOpacity = Math.max(0, 1 - progress * 1.15);
+  const portraitShift = progress * (isMobile ? 6 : 10);
+  const portraitMask = isMobile
+    ? "linear-gradient(to bottom, #000 62%, transparent 100%)"
+    : "linear-gradient(to right, transparent 0%, #000 34%), linear-gradient(to top, transparent 0%, #000 14%)";
+
   const contentOpacity = Math.max(0, 1 - progress * 1.6);
   const contentShift = progress * 40;
 
@@ -137,6 +151,37 @@ export default function Hero() {
       style={{ height: isMobile ? "115dvh" : "125dvh" }}
     >
       <section className="sticky top-0 flex h-[100dvh] w-full flex-col justify-center overflow-hidden px-6 pt-28 pb-16 sm:px-8 sm:pt-32 lg:px-16 lg:pt-28">
+        {/* z-0 (underneath): portrait that the video card covers while it grows */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 flex items-start justify-end overflow-hidden"
+          style={{
+            opacity: portraitOpacity,
+            transform: `translateY(${-portraitShift}dvh) scale(${1 + progress * 0.06})`,
+            transformOrigin: "70% 30%",
+          }}
+        >
+          <img
+            src="/fotos/hero-laranja.webp"
+            alt=""
+            width="1024"
+            height="1536"
+            fetchPriority="high"
+            decoding="async"
+            className="max-w-none object-cover object-top md:object-contain md:object-right"
+            style={{
+              // inline on purpose: the global `img { height: auto }` rule in
+              // index.css would otherwise beat the Tailwind height utilities.
+              height: isMobile ? "64dvh" : "100%",
+              width: isMobile ? "100%" : "auto",
+              WebkitMaskImage: portraitMask,
+              maskImage: portraitMask,
+              WebkitMaskComposite: "source-in",
+              maskComposite: "intersect",
+            }}
+          />
+        </div>
+
         {/* z-0: video card, exclusive owner of the scroll-expansion animation */}
         <div
           className="absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 overflow-hidden bg-ink"
@@ -154,6 +199,7 @@ export default function Hero() {
           <video
             ref={videoRef}
             className="h-full w-full object-cover"
+            style={{ height: "100%" }}
             autoPlay
             loop
             muted

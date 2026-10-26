@@ -29,7 +29,7 @@ export default function Home() {
   }, [location.hash]);
 
   return (
-    <div className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-ink">
+    <div className="min-h-screen w-full max-w-[100vw] overflow-x-clip bg-ink">
       <ScrollProgress />
       <GlobalClickSpark />
       <Navbar />
