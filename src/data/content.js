@@ -105,6 +105,17 @@ export const PROJECT_CATEGORIES = [
 
 export const PROJECTS = [
   {
+    id: "majestoso-resort",
+    title: "Majestoso Resort & Spa",
+    description:
+      "Site elegante para resort e spa, com acomodações, promoções, cobertura exclusiva e reservas, em um visual minimalista marrom e bege.",
+    image: "/projects/majestoso.jpg",
+    imageAlt: "Preview do site Majestoso Resort & Spa, com piscina ao fundo",
+    link: "https://majestoso-site.vercel.app/",
+    tags: ["HTML/CSS", "Hotelaria", "Landing Page"],
+    category: "sites",
+  },
+  {
     id: "volta-motos",
     title: "Volta — Motos elétricas",
     description:
@@ -113,17 +124,6 @@ export const PROJECTS = [
     imageAlt: "Preview do site Volta — Motos elétricas de alta performance",
     link: "https://effulgent-marzipan-9adc10.netlify.app/",
     tags: ["React", "Landing Page", "E-commerce"],
-    category: "sites",
-  },
-  {
-    id: "word-master",
-    title: "WordMaster",
-    description:
-      "Caça-palavras interativo com temas variados, sistema de pontuação e geração dinâmica de novos jogos.",
-    image: "/projects/wordmaster.png",
-    imageAlt: "Preview do site WordMaster — Caça-Palavras Gourmet",
-    link: "https://wordmaster2.netlify.app/",
-    tags: ["React", "Jogo", "UI/UX Design"],
     category: "sites",
   },
   {
@@ -138,14 +138,25 @@ export const PROJECTS = [
     category: "sites",
   },
   {
+    id: "word-master",
+    title: "WordMaster",
+    description:
+      "Caça-palavras interativo com temas variados, sistema de pontuação e geração dinâmica de novos jogos.",
+    image: "/projects/wordmaster.png",
+    imageAlt: "Preview do site WordMaster — Caça-Palavras Gourmet",
+    link: "https://wordmaster2.netlify.app/",
+    tags: ["React", "Jogo", "UI/UX Design"],
+    category: "sites",
+  },
+  {
     id: "nutrisnap",
     title: "NutriSnap",
     description:
       "App de nutrição que identifica os alimentos do prato por foto ou texto com IA e calcula calorias e macros automaticamente.",
     image: "/projects/nutrisnap.png",
     imageAlt: "Logo do app NutriSnap, com garfo e colher dentro de um círculo",
-    link: "https://github.com/JohannesMendes/NutriSnap",
-    linkLabel: "Ver no GitHub",
+    link: "https://nutri-snap-murex.vercel.app/",
+    linkLabel: "Baixar app",
     tags: ["Flutter", "IA Gemini", "Firebase"],
     category: "apps",
   },
