@@ -82,12 +82,12 @@ export default function AppShowcase() {
               </span>
             ))}
             <a
-              href="https://github.com/JohannesMendes/NutriSnap"
+              href="https://nutri-snap-murex.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex sm:ml-auto items-center gap-2 rounded-full bg-signal px-6 py-3 font-mono text-sm font-semibold text-ink transition-opacity hover:opacity-90"
             >
-              Ver no GitHub
+              Baixar app
               <ArrowUpRight size={16} />
             </a>
           </div>
