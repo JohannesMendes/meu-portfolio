@@ -116,6 +116,17 @@ export const PROJECTS = [
     category: "sites",
   },
   {
+    id: "homem-aranha",
+    title: "It's okay, I'm Spider-Man",
+    description:
+      "Site de scroll criativo inspirado no Homem-Aranha, com camadas de imagens, teias, óculos e frases em tipografia gigante.",
+    image: "/projects/homem-aranha.jpg",
+    imageAlt: "Preview do site It's okay, I'm Spider-Man, em preto e vermelho",
+    link: "https://homem-aranha-rust.vercel.app/",
+    tags: ["Landing Page", "Scroll Animation", "UI/UX Design"],
+    category: "sites",
+  },
+  {
     id: "volta-motos",
     title: "Volta — Motos elétricas",
     description:
